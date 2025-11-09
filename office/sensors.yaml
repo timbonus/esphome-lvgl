@@ -186,3 +186,15 @@ binary_sensor:
           id: office_blind_close_button
           state:
             checked: !lambda return x;
+
+  # Office Features Scene
+  - platform: homeassistant
+    id: office_storage_lights
+    entity_id: light.office_storage
+    trigger_on_initial_state: true
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: storage_lights_button
+          state:
+            checked: !lambda return id(office_storage_lights).state == 'on';

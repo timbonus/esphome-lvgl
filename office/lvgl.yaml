@@ -319,7 +319,7 @@ lvgl:
                   text_font: $icon_font
                   align: top_left
                   id: storage_lights_icon
-                  text: $battery
+                  text: $led_strip_variant
               - label:
                   align: bottom_left
                   id: storage_lights_label
