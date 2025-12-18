@@ -1,0 +1,24 @@
+# ESP32-S3-Touch-LCD-7
+substitutions:
+  name: "your-device-name"
+  friendly_name: "Your Room Sensor"
+  room: "Your Room"
+
+# Wifi Setup
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+# Packages
+packages:
+  setup:
+    url: https://github.com/jtenniswood/esphome-lvgl/
+    files: [device/guition-esp32-s3-4848s040.yaml,
+            addon/time.yaml,
+            addon/network.yaml,
+            assets/fonts.yaml,
+            assets/icons.yaml,
+            theme/button.yaml,
+            test-device/sensors.yaml,
+            test-device/lvgl.yaml]
+    refresh: 1sec
