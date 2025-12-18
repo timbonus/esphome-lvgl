@@ -25,23 +25,7 @@ psram:
   mode: octal
   speed: 80MHz
 
-switch:
-  - platform: gpio
-    name: Relay 1
-    pin:
-      number: GPIO40
-      inverted: true
-  - platform: gpio
-    name: Relay 2
-    pin:
-      number: GPIO2
-      inverted: true
-  - platform: gpio
-    name: Relay 3
-    pin:
-      number: GPIO1
-      inverted: true
-
+# Backlight Output
 output:
   - platform: ledc
     id: backlight_output
@@ -50,6 +34,7 @@ output:
     min_power: 0.01
     zero_means_zero: true
 
+# Backlight
 light:
   - platform: monochromatic
     name: Backlight
@@ -58,11 +43,13 @@ light:
     restore_mode: ALWAYS_ON
     default_transition_length: 1s
 
+# SPI
 spi:
   - id: lcd_spi
     clk_pin: GPIO48
     mosi_pin: GPIO47
 
+# Touchscreen I2C
 i2c:
   id: touchscreen_bus
   sda: GPIO19
@@ -70,13 +57,19 @@ i2c:
     number: 45
     ignore_strapping_warning: true
 
+# Touchscreen
+touchscreen:
+  - platform: gt911
+    id: tft_touch
+    display: tft_display
+
+# Display
 display:
   - platform: st7701s
     id: tft_display
     dimensions:
       width: 480
       height: 480
-    #    rotation: 270    #uncomment for placement with down-facing USB socket
     spi_mode: MODE3
     data_rate: 2MHz
     color_order: RGB
@@ -104,11 +97,3 @@ display:
       red: [11, 12, 13, 14, 0]
       green: [8, 20, 3, 46, 9, 10]
       blue: [4, 5, 6, 7, 15]
-
-touchscreen:
-  - platform: gt911
-    id: tft_touch
-    display: tft_display
-#    transform:     #uncomment for placement with down-facing USB socket
-#      swap_xy: true
-#      mirror_x: true
