@@ -22,7 +22,13 @@ script:
       - lvgl.label.update:
           id: display_time
           text: !lambda |-
-            auto now = id(sntp_time).now();
-            char time_buf[17];
-            snprintf(time_buf, sizeof(time_buf), "%02d:%02d", now.hour, now.minute);
-            return std::string(time_buf);
+            if (id(sntp_time).now().is_valid()) {
+              auto now = id(sntp_time).now();
+              char time_buf[17];
+              snprintf(time_buf, sizeof(time_buf), "%02d:%02d", now.hour, now.minute);
+              ESP_LOGI("time", "Updating time display to: %s", time_buf);
+              return std::string(time_buf);
+            } else {
+              ESP_LOGW("time", "Time not yet synced");
+              return std::string("--:--");
+            }
