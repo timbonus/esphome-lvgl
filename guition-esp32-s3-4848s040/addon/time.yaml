@@ -23,20 +23,16 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("time", "time_update script executing...");
-      - lvgl.label.update:
-          id: display_time
-          text: !lambda |-
-            ESP_LOGI("time", "Inside lambda, checking time validity...");
-            if (id(sntp_time).now().is_valid()) {
-              auto now = id(sntp_time).now();
-              char time_buf[17];
-              snprintf(time_buf, sizeof(time_buf), "%02d:%02d", now.hour, now.minute);
-              ESP_LOGI("time", "Updating time display to: %s", time_buf);
-              return std::string(time_buf);
-            } else {
-              ESP_LOGW("time", "Time not yet synced, showing placeholder");
-              return std::string("--:--");
-            }
+          if (id(sntp_time).now().is_valid()) {
+            auto now = id(sntp_time).now();
+            char time_buf[17];
+            snprintf(time_buf, sizeof(time_buf), "%02d:%02d", now.hour, now.minute);
+            ESP_LOGI("time", "Updating time display to: %s", time_buf);
+            id(display_time).set_text(std::string(time_buf));
+          } else {
+            ESP_LOGW("time", "Time not yet synced, showing placeholder");
+            id(display_time).set_text("--:--");
+          }
 
 # Periodically try to update time display (every 10 seconds)
 interval:
