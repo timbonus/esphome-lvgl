@@ -1106,11 +1106,8 @@ lvgl:
                   widgets:
                     - label:
                         text_font: $icon_font
-                        align: left_mid
-                        text: $aircon
-                    - label:
-                        align: right_mid
-                        text: "Power"
+                        align: center
+                        text: $power
                   on_click:
                     - homeassistant.service:
                         service: switch.toggle
