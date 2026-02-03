@@ -158,9 +158,7 @@ sensor:
             args: [ 'x' ]
       - lvgl.arc.update:
           id: aircon_current_arc
-          value: !lambda |-
-            if (x < 16) return 16;
-            return (int)x;
+          value: !lambda return (int)x;
 
   # ===========================================================================
   # SENSOR: Aircon Target Temperature
@@ -192,9 +190,7 @@ sensor:
             args: [ 'x' ]
       - lvgl.arc.update:
           id: aircon_target_arc
-          value: !lambda |-
-            if (x < 16) return 16;
-            return (int)x;
+          value: !lambda return (int)x;
 
   # ===========================================================================
   # SENSOR: Centauri Carbon Print Progress
