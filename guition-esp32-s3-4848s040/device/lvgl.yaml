@@ -1036,9 +1036,9 @@ lvgl:
                     bg_color: 0x7A7A7A
                   clickable: false
 
-              # Current temperature label (below)
+              # Target temperature label (below)
               - label:
-                  id: aircon_lab_current_label
+                  id: aircon_lab_target_label
                   text: "--°"
                   text_font: roboto36_font
                   text_color: 0xFFFFFF

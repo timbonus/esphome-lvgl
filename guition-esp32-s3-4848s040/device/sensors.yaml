@@ -151,11 +151,6 @@ sensor:
           text:
             format: "%.0f°"
             args: [ 'x' ]
-      - lvgl.label.update:
-          id: aircon_lab_current_label
-          text:
-            format: "%.0f°"
-            args: [ 'x' ]
       - lvgl.arc.update:
           id: aircon_current_arc
           value: !lambda return (int)x;
@@ -180,6 +175,11 @@ sensor:
     on_value:
       - lvgl.label.update:
           id: aircon_set_temp_label
+          text:
+            format: "%.0f°"
+            args: [ 'x' ]
+      - lvgl.label.update:
+          id: aircon_lab_target_label
           text:
             format: "%.0f°"
             args: [ 'x' ]
