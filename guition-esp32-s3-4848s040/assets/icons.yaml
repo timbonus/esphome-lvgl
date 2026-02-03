@@ -22,7 +22,6 @@ font:
       "\U000F0141",  # mdi-chevron-left
       "\U000F0143",  # mdi-chevron-up
       "\U000F0140",  # mdi-chevron-down
-      "\U000F0425",  # mdi-power
       "\U000F089E",  # mdi-battery
       "\U000F07DE",  # mdi-filament
       "\U000F0317",  # mdi-lan
@@ -46,7 +45,6 @@ substitutions:
   chevron_left:   "\U000F0141"
   chevron_up:     "\U000F0143"
   chevron_down:   "\U000F0140"
-  power:          "\U000F0425"
   battery:        "\U000F089E"
   filament:       "\U000F07DE"
   lan:            "\U000F0317"
