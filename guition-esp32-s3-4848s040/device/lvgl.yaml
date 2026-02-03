@@ -302,7 +302,7 @@ lvgl:
                   hidden: true
                   widgets:
                     - label:
-                        text_font: roboto36_font
+                        text_font: roboto48_font
                         text_color: 0xFFFFFF
                         id: print_progress_label
                         text: "--"
@@ -368,7 +368,7 @@ lvgl:
                   hidden: true
                   widgets:
                     - label:
-                        text_font: roboto36_font
+                        text_font: roboto48_font
                         text_color: 0xFFFFFF
                         id: dryer_humidity_label
                         text: "--"

@@ -10,6 +10,11 @@ font:
     bpp: 4
 
   - file: "gfonts://Roboto"
+    id: roboto48_font
+    size: 48
+    bpp: 4
+
+  - file: "gfonts://Roboto"
     id: roboto19_font
     size: 19
     bpp: 4
