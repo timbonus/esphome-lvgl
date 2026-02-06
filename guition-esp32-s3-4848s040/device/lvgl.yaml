@@ -1212,6 +1212,28 @@ lvgl:
                     bg_color: 0x000000
                   clickable: false
 
+              # Mask arc to hide the segment below the minimum (track color)
+              - arc:
+                  id: heating_mask_arc
+                  x: 60
+                  y: 80
+                  width: 360
+                  height: 360
+                  min_value: 20
+                  max_value: 64
+                  start_angle: 135
+                  end_angle: 45
+                  rotation: 0
+                  value: 44
+                  arc_width: 0
+                  arc_color: 0x000000
+                  indicator:
+                    arc_color: 0x2F2A28
+                    arc_width: 18
+                  knob:
+                    bg_color: 0x000000
+                  clickable: false
+
               # Dot for current temperature
               - arc:
                   id: heating_current_arc

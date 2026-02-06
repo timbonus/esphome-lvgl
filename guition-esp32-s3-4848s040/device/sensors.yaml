@@ -213,6 +213,28 @@ sensor:
       - lvgl.arc.update:
           id: heating_current_arc
           value: !lambda return (int)roundf(x * 2.0f);
+      - lvgl.arc.update:
+          id: heating_delta_arc
+          value: !lambda |-
+            float cur = x;
+            float tgt = cur;
+            if (id(heating_target_temperature).has_state()) {
+              tgt = id(heating_target_temperature).state;
+            }
+            int cur_v = (int)roundf(cur * 2.0f);
+            int tgt_v = (int)roundf(tgt * 2.0f);
+            return cur_v > tgt_v ? cur_v : tgt_v;
+      - lvgl.arc.update:
+          id: heating_mask_arc
+          value: !lambda |-
+            float cur = x;
+            float tgt = cur;
+            if (id(heating_target_temperature).has_state()) {
+              tgt = id(heating_target_temperature).state;
+            }
+            int cur_v = (int)roundf(cur * 2.0f);
+            int tgt_v = (int)roundf(tgt * 2.0f);
+            return cur_v < tgt_v ? cur_v : tgt_v;
 
   # ===========================================================================
   # SENSOR: Heating Target Temperature
@@ -242,7 +264,26 @@ sensor:
           value: !lambda return (int)roundf(x * 2.0f);
       - lvgl.arc.update:
           id: heating_delta_arc
-          value: !lambda return (int)roundf(x * 2.0f);
+          value: !lambda |-
+            float tgt = x;
+            float cur = tgt;
+            if (id(heating_current_temperature).has_state()) {
+              cur = id(heating_current_temperature).state;
+            }
+            int cur_v = (int)roundf(cur * 2.0f);
+            int tgt_v = (int)roundf(tgt * 2.0f);
+            return cur_v > tgt_v ? cur_v : tgt_v;
+      - lvgl.arc.update:
+          id: heating_mask_arc
+          value: !lambda |-
+            float tgt = x;
+            float cur = tgt;
+            if (id(heating_current_temperature).has_state()) {
+              cur = id(heating_current_temperature).state;
+            }
+            int cur_v = (int)roundf(cur * 2.0f);
+            int tgt_v = (int)roundf(tgt * 2.0f);
+            return cur_v < tgt_v ? cur_v : tgt_v;
 
 # =============================================================================
 # TEXT SENSORS (String Values)
