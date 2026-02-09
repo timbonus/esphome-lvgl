@@ -1,12 +1,13 @@
 # Backlight
 switch:
-  - platform: gpio
+  - platform: template
     id: backlight
-    pin: 
-      ch422g: ch422g_hub
-      number: 2
     restore_mode: ALWAYS_ON
     internal: true
+    turn_on_action:
+      - light.turn_on: display_backlight
+    turn_off_action:
+      - light.turn_off: display_backlight
 
 # Screensaver Presence Trigger
 binary_sensor:
