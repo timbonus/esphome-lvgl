@@ -68,7 +68,6 @@ sensor:
             int s = sec % 60;
             snprintf(buf, sizeof(buf), "%02d:%02d", m, s);
             return std::string(buf);
-    trigger_on_initial_state: true
 
   - platform: homeassistant
     entity_id: ${media_player_entity}
@@ -94,4 +93,3 @@ sensor:
               return (int)((pos / dur) * 100.0f);
             }
             return 0;
-    trigger_on_initial_state: true
