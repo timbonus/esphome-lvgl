@@ -111,9 +111,7 @@ text_sensor:
     on_value:
       - if:
           condition:
-            text_sensor.is_state:
-              id: media_player_state_sensor
-              state: "playing"
+            lambda: 'return x == "playing";'
           then:
             - lvgl.widget.hide:
                 id: media_play_icon
