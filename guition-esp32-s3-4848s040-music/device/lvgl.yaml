@@ -76,13 +76,13 @@ lvgl:
             text_color: 0xFFFFFF
             text_align: right
 
-        # Progress bar above the control buttons (full content width, white played / 50% black unplayed)
-        # Explicit width 456px and theme override so default theme does not force blue or 50% width
+        # Progress bar above the control buttons (full screen width 480px, white played / 50% black unplayed)
+        # x: -12 cancels page pad_left so bar spans from screen edge to edge
         - bar:
             id: media_progress_bar
-            x: 0
+            x: -12
             y: 352
-            width: 456px
+            width: 480px
             height: 8px
             min_value: 0
             max_value: 100
