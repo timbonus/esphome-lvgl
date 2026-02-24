@@ -1,8 +1,8 @@
 # ESP32-P4-JC1060P470
 substitutions:
-  name: "your-device-name"
-  friendly_name: "Your Room Sensor"
-  room: "Your Room"
+  name: "ha_touch"
+  friendly_name: "HomeAssistant touchscreen"
+  room: "Living room"
 
 # Wifi Setup
 wifi:
