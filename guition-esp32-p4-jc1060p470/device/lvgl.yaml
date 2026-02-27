@@ -59,7 +59,7 @@ lvgl:
               - label:
                   align: bottom_left
                   id: scene_features_label
-                  text: "Features"
+                  text: "Big bum button"
             on_press:
               - homeassistant.service:
                   service: switch.toggle
