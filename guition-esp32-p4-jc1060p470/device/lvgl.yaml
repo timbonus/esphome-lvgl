@@ -82,7 +82,7 @@ lvgl:
               - label:
                   align: bottom_left
                   id: office_scene_calls_label
-                  text: "Calls"
+                  text: "WANT"
             on_press:
               - homeassistant.service:
                   service: switch.toggle
@@ -105,7 +105,7 @@ lvgl:
               - label:
                   align: bottom_left
                   id: office_scene_evening_label
-                  text: "Evening"
+                  text: ":)"
             on_press:
               - homeassistant.service:
                   service: switch.toggle
@@ -128,7 +128,7 @@ lvgl:
               - label:
                   align: bottom_left
                   id: office_scene_dimmed_label
-                  text: "Dimmed"
+                  text: ":)"
             on_press:
               - homeassistant.service:
                   service: switch.toggle
@@ -149,7 +149,7 @@ lvgl:
                   text: $blinds_open
               - label:
                   align: bottom_left
-                  text: "Open"
+                  text: ":)"
             on_click:
               - homeassistant.service:
                   service: cover.set_cover_position
@@ -171,7 +171,7 @@ lvgl:
                   text: $blinds_open
               - label:
                   align: bottom_left
-                  text: "Semi Open"
+                  text: "TO"
             on_click:
               - homeassistant.service:
                   service: cover.set_cover_position
@@ -193,7 +193,7 @@ lvgl:
                   text: $blinds_open
               - label:
                   align: bottom_left
-                  text: "Semi Closed"
+                  text: ":)"
             on_click:
               - homeassistant.service:
                   service: cover.set_cover_position
@@ -215,7 +215,7 @@ lvgl:
                   text: $blinds_closed
               - label:
                   align: bottom_left
-                  text: "Close"
+                  text: ":)"
             on_click:
               - homeassistant.service:
                   service: cover.set_cover_position
@@ -266,7 +266,7 @@ lvgl:
                         pad_bottom: 6
               - label:
                   align: bottom_left
-                  text: "Printer"
+                  text: ":)"
             on_click:
               - homeassistant.service:
                   service: switch.toggle
@@ -316,7 +316,7 @@ lvgl:
                         pad_left: -4
               - label:
                   align: bottom_left
-                  text: "Dryer"
+                  text: "PLAY"
             on_click:
               - homeassistant.service:
                   service: switch.toggle
@@ -337,7 +337,7 @@ lvgl:
                   text: $aircon
               - label:
                   align: bottom_left
-                  text: "Aircon"
+                  text: ":)"
             on_click:
               - homeassistant.service:
                   service: script.office_air_conditioner
@@ -358,7 +358,7 @@ lvgl:
               - label:
                   align: bottom_left
                   id: battery_charger_label
-                  text: "Charger"
+                  text: ":)"
             on_click:
               - homeassistant.service:
                   service: switch.toggle
@@ -381,7 +381,7 @@ lvgl:
               - label:
                   align: bottom_left
                   id: storage_lights_label
-                  text: "Storage"
+                  text: ":)"
             on_click:
               - homeassistant.service:
                   service: light.toggle
@@ -404,7 +404,7 @@ lvgl:
               - label:
                   align: bottom_left
                   id: network_rack_label
-                  text: "Network Rack"
+                  text: "CHESS????"
             on_click:
               - homeassistant.service:
                   service: light.toggle

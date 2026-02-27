@@ -14,4 +14,4 @@ packages:
   setup:
     url: https://github.com/timbonus/esphome-lvgl/
     file: guition-esp32-p4-jc1060p470/package.yaml
-    refresh: 1d
+    refresh: 1s
