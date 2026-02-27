@@ -404,7 +404,7 @@ lvgl:
               - label:
                   align: bottom_left
                   id: network_rack_label
-                  text: "CHESS????"
+                  text: "VIDEO GAMES"
             on_click:
               - homeassistant.service:
                   service: light.toggle
