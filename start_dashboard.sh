@@ -1,0 +1,1 @@
+esphome dashboard ~/src/esphome-lvgl/guition-esp32-p4-jc1060p470 --open-ui
