@@ -77,7 +77,7 @@ lvgl:
               - label:
                   text_font: $icon_font
                   align: top_left
-                  text: "Condensate evaporator"
+                  text: $aircon
               - label:
                   align: bottom_left
                   text: "Condensate evaporator"
