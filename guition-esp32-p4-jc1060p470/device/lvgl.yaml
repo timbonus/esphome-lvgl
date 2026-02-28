@@ -60,4 +60,4 @@ lvgl:
                   text: "Condensate evaporator"
             on_click:
               - homeassistant.service:
-                  service: switch.toggle_condensate_evaporator
+                  service: script.toggle_condensate_evaporator
