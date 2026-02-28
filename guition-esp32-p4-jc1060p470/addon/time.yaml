@@ -1,19 +1,7 @@
 # Snmp Time
 time:
-  - platform: sntp
-    id: sntp_time
-    timezone: Australia/Sydney
-    servers:
-     - 0.pool.ntp.org
-     - 1.pool.ntp.org
-     - 2.pool.ntp.org
-    on_time_sync:
-      - script.execute: time_update
-    on_time:
-      - minutes: '*'
-        seconds: 0
-        then:
-          - script.execute: time_update
+  - platform: homeassistant
+    id: esptime
 
 # Clock
 script:
