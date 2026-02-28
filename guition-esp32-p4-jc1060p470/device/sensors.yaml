@@ -3,15 +3,3 @@ binary_sensor:
   - platform: homeassistant
     id: condensate_evaporator_switch
     entity_id: switch.condensate_evaporator_switch
-    trigger_on_initial_state: false
-    on_turn_on:
-      lvgl.widget.update:
-        id: condensate_evaporator_button
-        state: !lambda return x;
-      # if:
-      #   condition:
-      #     lambda: 'return x;'
-      # then:
-      #   logger.log: "Condensate evaportor on"
-      # else:
-      #   logger.log: "Condensate evaportor off"
