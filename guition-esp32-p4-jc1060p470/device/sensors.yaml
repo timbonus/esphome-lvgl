@@ -3,3 +3,9 @@ binary_sensor:
   - platform: homeassistant
     id: condensate_evaporator_switch
     entity_id: switch.condensate_evaporator_switch
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: condensate_evaporator_button
+          state:
+            checked: !lambda return x;
