@@ -43,29 +43,6 @@ lvgl:
       
       widgets:
       
-        # Office Features Scene
-        - button: 
-            height: $button_height
-            width: $button_width
-            checkable: true
-            id: office_scene_features_button
-            styles: control
-            widgets:
-              - label:
-                  text_font: $icon_font
-                  align: top_left
-                  id: scene_features_icon                
-                  text: $ledstrip
-              - label:
-                  align: bottom_left
-                  id: scene_features_label
-                  text: "Big bum button"
-            on_press:
-              - homeassistant.service:
-                  service: switch.toggle
-                  data:
-                    entity_id: switch.office_features_stateful_scene
-
         # Condensate evaporator toggle
         - button: 
             height: $button_height
@@ -83,6 +60,4 @@ lvgl:
                   text: "Condensate evaporator"
             on_click:
               - homeassistant.service:
-                  service: switch.toggle
-                  data:
-                    entity_id: switch.toggle_condensate_evaporator                
+                  service: switch.toggle_condensate_evaporator
