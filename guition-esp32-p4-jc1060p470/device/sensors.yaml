@@ -5,14 +5,13 @@ binary_sensor:
     entity_id: switch.condensate_evaporator_switch
     trigger_on_initial_state: true
     on_state:
+      lvgl.widget.update:
+        id: condensate_evaporator_button
+        state: !lambda return x;
       if:
         condition:
           lambda: 'return x;'
       then:
-        - logger.log: "Condensate evaportor on"
+        logger.log: "Condensate evaportor on"
       else:
-        - logger.log: "Condensate evaportor off"
-      lvgl.widget.update:
-        id: condensate_evaporator_button
-        state:
-          checked: !lambda return x;
+        logger.log: "Condensate evaportor off"
