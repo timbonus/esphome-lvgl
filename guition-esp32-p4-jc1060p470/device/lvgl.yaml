@@ -71,13 +71,13 @@ lvgl:
             height: $button_height
             width: $button_width
             checkable: true
-            id: condensate_evaporator_switch
+            id: condensate_evaporator_button
             styles: control
             widgets:
               - label:
                   text_font: $icon_font
                   align: top_left
-                  text: $aircon_evaporator
+                  text: "Condensate evaporator"
               - label:
                   align: bottom_left
                   text: "Condensate evaporator"
