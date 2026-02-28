@@ -1,7 +1,14 @@
-# Snmp Time
+# Home Assistant Time
 time:
   - platform: homeassistant
     id: esptime
+    on_time_sync:
+      - script.execute: time_update
+    on_time:
+      - minutes: '*'
+        seconds: 0
+        then:
+          - script.execute: time_update
 
 # Clock
 script:

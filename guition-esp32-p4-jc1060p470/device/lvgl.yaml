@@ -61,3 +61,16 @@ lvgl:
             on_click:
               - homeassistant.service:
                   service: script.toggle_condensate_evaporator
+
+        - obj: # Container for grouping
+            width: 100%
+            height: 60
+            layout: horizontal
+            # flex_flow: column
+            widgets:
+              - label:
+                  id: temp_label
+                  text: "Loading Temp..."
+              - label:
+                  id: rain_chance_label
+                  text: "Loading change of rain..."
