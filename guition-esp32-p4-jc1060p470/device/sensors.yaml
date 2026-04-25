@@ -1,4 +1,5 @@
 binary_sensor:
+
   # Condensate evaporator switch position
   - platform: homeassistant
     id: condensate_evaporator_switch
@@ -10,25 +11,443 @@ binary_sensor:
           state:
             checked: !lambda return x;
 
+  # Garage door sensor (Z-Wave)
+  - platform: homeassistant
+    id: garage_door_sensor
+    entity_id: binary_sensor.door_window_sensor_gen5
+    on_state:
+      then:
+        - if:
+            condition:
+              lambda: return x;  # true = open
+            then:
+              - lvgl.label.update:
+                  id: garage_door_icon
+                  text_color: 0xFF5252
+              - lvgl.label.update:
+                  id: garage_door_label
+                  text: "Open"
+                  text_color: 0xFF5252
+            else:
+              - lvgl.label.update:
+                  id: garage_door_icon
+                  text_color: 0x4CAF50
+              - lvgl.label.update:
+                  id: garage_door_label
+                  text: "Closed"
+                  text_color: 0x4CAF50
+
+  # Garage smart plug / lights (Zigbee)
+  - platform: homeassistant
+    id: garage_plug_state
+    entity_id: switch.kitchen_plug
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: garage_plug_button
+          state:
+            checked: !lambda return x;
+
+  # Apartment lights (Tapo)
+  - platform: homeassistant
+    id: bedroom_light_state
+    entity_id: light.bedroom_light
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: bedroom_light_btn
+          state:
+            checked: !lambda return x;
+
+  - platform: homeassistant
+    id: bookcase_lamp_state
+    entity_id: light.bookcase_lamp
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: bookcase_lamp_btn
+          state:
+            checked: !lambda return x;
+
+  - platform: homeassistant
+    id: lounge_light_1_state
+    entity_id: light.lounge_room_light
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: lounge_light_1_btn
+          state:
+            checked: !lambda return x;
+
+  - platform: homeassistant
+    id: lounge_light_2_state
+    entity_id: light.lounge_room_light_2
+    on_state:
+      then:
+        lvgl.widget.update:
+          id: lounge_light_2_btn
+          state:
+            checked: !lambda return x;
+
 sensor:
+
+  # Current outdoor temperature (BOM observation station — drives top-bar label)
   - platform: homeassistant
     id: ha_temp
     entity_id: sensor.sydney_observatory_hill_temp
-    internal: true # Keeps it from being sent back to HA
+    internal: true
     on_value:
       then:
         - lvgl.label.update:
-            id: temp_label
+            id: temperatures
             text: !lambda |-
-              return ("Temp: " + str_sprintf("%.1f", x) + "°C").c_str();
+              return str_sprintf("%.0f°C", x).c_str();
+
+  # ── Clovelly daily forecast ─────────────────────────────────────────────
+  # Entity names follow the same _0/_1/_2 pattern as the confirmed rain_chance sensors.
 
   - platform: homeassistant
-    id: ha_rain
+    id: ha_max_0
+    entity_id: sensor.clovelly_max_0
+    internal: true
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: weather_today_temp
+            text: !lambda return str_sprintf("%.0f°", x).c_str();
+
+  - platform: homeassistant
+    id: ha_min_0
+    entity_id: sensor.clovelly_min_0
+    internal: true
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: weather_today_low
+            text: !lambda return str_sprintf("%.0f° low", x).c_str();
+
+  - platform: homeassistant
+    id: ha_rain_0
     entity_id: sensor.clovelly_rain_chance_0
     internal: true
     on_value:
       then:
         - lvgl.label.update:
-            id: rain_chance_label
-            text: !lambda |-
-              return ("Chance of rain: " + str_sprintf("%.1f", x)).c_str();
+            id: weather_today_rain
+            text: !lambda return str_sprintf("%.0f%% rain", x).c_str();
+
+  - platform: homeassistant
+    id: ha_max_1
+    entity_id: sensor.clovelly_max_1
+    internal: true
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: weather_tomorrow_temp
+            text: !lambda return str_sprintf("%.0f°", x).c_str();
+
+  - platform: homeassistant
+    id: ha_min_1
+    entity_id: sensor.clovelly_min_1
+    internal: true
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: weather_tomorrow_low
+            text: !lambda return str_sprintf("%.0f° low", x).c_str();
+
+  - platform: homeassistant
+    id: ha_rain_1
+    entity_id: sensor.clovelly_rain_chance_1
+    internal: true
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: weather_tomorrow_rain
+            text: !lambda return str_sprintf("%.0f%% rain", x).c_str();
+
+  - platform: homeassistant
+    id: ha_max_2
+    entity_id: sensor.clovelly_max_2
+    internal: true
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: weather_day2_temp
+            text: !lambda return str_sprintf("%.0f°", x).c_str();
+
+  - platform: homeassistant
+    id: ha_min_2
+    entity_id: sensor.clovelly_min_2
+    internal: true
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: weather_day2_low
+            text: !lambda return str_sprintf("%.0f° low", x).c_str();
+
+  - platform: homeassistant
+    id: ha_rain_2
+    entity_id: sensor.clovelly_rain_chance_2
+    internal: true
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: weather_day2_rain
+            text: !lambda return str_sprintf("%.0f%% rain", x).c_str();
+
+  # ── Hourly forecast temperatures (sensor.clovelly_hour_N_temp) ───────────
+  - platform: homeassistant
+    id: hourly_temp_s0
+    entity_id: sensor.clovelly_hour_0_temp
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_temp_0
+          text: !lambda return str_sprintf("%.0f°", x).c_str();
+  - platform: homeassistant
+    id: hourly_temp_s1
+    entity_id: sensor.clovelly_hour_1_temp
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_temp_1
+          text: !lambda return str_sprintf("%.0f°", x).c_str();
+  - platform: homeassistant
+    id: hourly_temp_s2
+    entity_id: sensor.clovelly_hour_2_temp
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_temp_2
+          text: !lambda return str_sprintf("%.0f°", x).c_str();
+  - platform: homeassistant
+    id: hourly_temp_s3
+    entity_id: sensor.clovelly_hour_3_temp
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_temp_3
+          text: !lambda return str_sprintf("%.0f°", x).c_str();
+  - platform: homeassistant
+    id: hourly_temp_s4
+    entity_id: sensor.clovelly_hour_4_temp
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_temp_4
+          text: !lambda return str_sprintf("%.0f°", x).c_str();
+  - platform: homeassistant
+    id: hourly_temp_s5
+    entity_id: sensor.clovelly_hour_5_temp
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_temp_5
+          text: !lambda return str_sprintf("%.0f°", x).c_str();
+  - platform: homeassistant
+    id: hourly_temp_s6
+    entity_id: sensor.clovelly_hour_6_temp
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_temp_6
+          text: !lambda return str_sprintf("%.0f°", x).c_str();
+  - platform: homeassistant
+    id: hourly_temp_s7
+    entity_id: sensor.clovelly_hour_7_temp
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_temp_7
+          text: !lambda return str_sprintf("%.0f°", x).c_str();
+
+text_sensor:
+
+  # UV alert level — BOM returns text: "Low", "Moderate", "High", "Very High", "Extreme"
+  # If your integration uses a numeric uv_index instead, switch these to numeric sensor above.
+  - platform: homeassistant
+    id: ha_uv_0
+    entity_id: sensor.clovelly_uv_alert_0
+    internal: true
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: weather_today_uv
+            text: !lambda return ("UV: " + x).c_str();
+
+  - platform: homeassistant
+    id: ha_uv_1
+    entity_id: sensor.clovelly_uv_alert_1
+    internal: true
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: weather_tomorrow_uv
+            text: !lambda return ("UV: " + x).c_str();
+
+  - platform: homeassistant
+    id: ha_uv_2
+    entity_id: sensor.clovelly_uv_alert_2
+    internal: true
+    on_value:
+      then:
+        - lvgl.label.update:
+            id: weather_day2_uv
+            text: !lambda return ("UV: " + x).c_str();
+
+  # ── Hourly time labels (sensor.clovelly_hour_N_time) ─────────────────────
+  - platform: homeassistant
+    id: hourly_time_s0
+    entity_id: sensor.clovelly_hour_0_time
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_time_0
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_time_s1
+    entity_id: sensor.clovelly_hour_1_time
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_time_1
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_time_s2
+    entity_id: sensor.clovelly_hour_2_time
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_time_2
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_time_s3
+    entity_id: sensor.clovelly_hour_3_time
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_time_3
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_time_s4
+    entity_id: sensor.clovelly_hour_4_time
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_time_4
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_time_s5
+    entity_id: sensor.clovelly_hour_5_time
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_time_5
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_time_s6
+    entity_id: sensor.clovelly_hour_6_time
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_time_6
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_time_s7
+    entity_id: sensor.clovelly_hour_7_time
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_time_7
+          text: !lambda return x.c_str();
+
+  # ── Hourly wind labels (sensor.clovelly_hour_N_wind) ─────────────────────
+  - platform: homeassistant
+    id: hourly_wind_s0
+    entity_id: sensor.clovelly_hour_0_wind
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_wind_0
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_wind_s1
+    entity_id: sensor.clovelly_hour_1_wind
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_wind_1
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_wind_s2
+    entity_id: sensor.clovelly_hour_2_wind
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_wind_2
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_wind_s3
+    entity_id: sensor.clovelly_hour_3_wind
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_wind_3
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_wind_s4
+    entity_id: sensor.clovelly_hour_4_wind
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_wind_4
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_wind_s5
+    entity_id: sensor.clovelly_hour_5_wind
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_wind_5
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_wind_s6
+    entity_id: sensor.clovelly_hour_6_wind
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_wind_6
+          text: !lambda return x.c_str();
+  - platform: homeassistant
+    id: hourly_wind_s7
+    entity_id: sensor.clovelly_hour_7_wind
+    internal: true
+    on_value:
+      then:
+        lvgl.label.update:
+          id: hourly_wind_7
+          text: !lambda return x.c_str();

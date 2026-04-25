@@ -4,20 +4,64 @@ time:
     id: esptime
     on_time_sync:
       - script.execute: time_update
+      - script.execute: page_switch_time_of_day
     on_time:
       - minutes: '*'
         seconds: 0
         then:
           - script.execute: time_update
+      # Morning: switch to home page (weather + garage)
+      - hours: 6
+        minutes: 0
+        seconds: 0
+        then:
+          - lvgl.page.show: home_page
+      # Evening: switch to music page
+      - hours: 18
+        minutes: 0
+        seconds: 0
+        then:
+          - lvgl.page.show: music_page
 
-# Clock
 script:
+
+  # Update clock display and forecast day-name labels
   - id: time_update
     then:
       - lvgl.label.update:
           id: display_time
           text: !lambda |-
-            static char time_buf[17];
+            static char time_buf[6];
             auto now = id(esptime).now();
             snprintf(time_buf, sizeof(time_buf), "%02d:%02d", now.hour, now.minute);
             return time_buf;
+      - lvgl.label.update:
+          id: weather_tomorrow_name
+          text: !lambda |-
+            static char buf[4];
+            const char* days[] = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+            auto now = id(esptime).now();
+            // day_of_week: 1=Sun…7=Sat; tomorrow index in 0-based days array
+            snprintf(buf, sizeof(buf), "%s", days[now.day_of_week % 7]);
+            return buf;
+      - lvgl.label.update:
+          id: weather_day2_name
+          text: !lambda |-
+            static char buf[4];
+            const char* days[] = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+            auto now = id(esptime).now();
+            snprintf(buf, sizeof(buf), "%s", days[(now.day_of_week + 1) % 7]);
+            return buf;
+
+  # On boot, jump to the page appropriate for the current hour
+  - id: page_switch_time_of_day
+    then:
+      - if:
+          condition:
+            lambda: |-
+              auto now = id(esptime).now();
+              return now.hour >= 18;
+          then:
+            - lvgl.page.show: music_page
+          else:
+            - lvgl.page.show: home_page

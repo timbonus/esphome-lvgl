@@ -1,6 +1,6 @@
 # http://materialdesignicons.com/cdn/7.4.47/
 
-# Define icons used
+# Full-size icons (48px) for buttons
 font:
   - file: 'https://github.com/Templarian/MaterialDesign-Webfont/raw/v7.4.47/fonts/materialdesignicons-webfont.ttf'
     id: icon_font
@@ -22,24 +22,51 @@ font:
       "\U000F089E",  # mdi-battery
       "\U000F07DE",  # mdi-filament
       "\U000F0317",  # mdi-lan
+      "\U000F01FF",  # mdi-garage
+      "\U000F068C",  # mdi-power-plug
+      "\U000F068D",  # mdi-power-plug-off
+      "\U000F0599",  # mdi-weather-sunny
+      "\U000F0597",  # mdi-weather-rainy
+      "\U000F058E",  # mdi-water-percent
+      "\U000F050F",  # mdi-thermometer
+      "\U000F0425",  # mdi-radio
+      ]
+
+  # Navigation bar icons (32px) — minimal glyph set to save flash
+  - file: 'https://github.com/Templarian/MaterialDesign-Webfont/raw/v7.4.47/fonts/materialdesignicons-webfont.ttf'
+    id: nav_icon_font
+    size: 32
+    bpp: 8
+    glyphs: [
+      "\U000F02DC",  # mdi-home
+      "\U000F0335",  # mdi-lightbulb
+      "\U000F0425",  # mdi-radio
       ]
 
 # Map icons to names
 substitutions:
-  lightbulb:      "\U000F0335"
-  printer:        "\U000F042B"
-  aircon:         "\U000F0D43"
-  ledstrip:       "\U000F1051"
+  lightbulb:        "\U000F0335"
+  printer:          "\U000F042B"
+  aircon:           "\U000F0D43"
+  ledstrip:         "\U000F1051"
   led_strip_variant: "\U000F1051"
-  package:        "\U000F03D7"
-  lights:         "\U000F07D6"
-  blinds_closed:  "\U000F00AC"
-  blinds_open:    "\U000F1011"
-  nightlight:     "\U000F1A4C"
-  network:        "\U000F1087"
-  videocall:      "\U000F036B"
-  application:    "\U000F0614"
-  battery:        "\U000F089E"
-  filament:       "\U000F07DE"
-  lan:            "\U000F0317"
-
+  package:          "\U000F03D7"
+  lights:           "\U000F07D6"
+  blinds_closed:    "\U000F00AC"
+  blinds_open:      "\U000F1011"
+  nightlight:       "\U000F1A4C"
+  network:          "\U000F1087"
+  videocall:        "\U000F036B"
+  application:      "\U000F0614"
+  battery:          "\U000F089E"
+  filament:         "\U000F07DE"
+  lan:              "\U000F0317"
+  garage_icon:      "\U000F01FF"
+  plug_on:          "\U000F068C"
+  plug_off:         "\U000F068D"
+  weather_sunny:    "\U000F0599"
+  weather_rainy:    "\U000F0597"
+  water_pct:        "\U000F058E"
+  thermometer:      "\U000F050F"
+  radio:            "\U000F0425"
+  nav_home:         "\U000F02DC"

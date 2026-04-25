@@ -1,50 +1,677 @@
 lvgl:
   displays: my_display
   byte_order: little_endian
-  
+
   top_layer:
     widgets:
-    
-      # Temperature
+
+      # Current temperature — top left
       - label:
-          text: "-° / -°"
           id: temperatures
+          text: "--°C"
           text_font: clockbar_font
           align: top_left
           x: 8
           y: 8
           text_color: 0xFFFFFF
 
-      # Clock
+      # Clock — top centre
       - label:
-          text: "--:--"
           id: display_time
+          text: "--:--"
           text_font: clockbar_font
           align: top_mid
           x: 0
           y: 8
           text_align: center
           text_color: 0xFFFFFF
-          
+
+      # Navigation bar — pinned to bottom of screen
+      - obj:
+          align: bottom_mid
+          width: 100%
+          height: 52
+          bg_color: 0x1A1A1A
+          border_width: 0
+          pad_all: 0
+          radius: 0
+          layout:
+            type: flex
+            flex_flow: row
+          widgets:
+
+            - button:
+                id: nav_btn_home
+                width: 353
+                height: 52
+                radius: 0
+                bg_color: 0x1A1A1A
+                shadow_width: 0
+                border_width: 0
+                widgets:
+                  - label:
+                      id: nav_lbl_home
+                      text: $nav_home
+                      text_font: nav_icon_font
+                      align: center
+                      text_color: 0xFFFFFF
+                on_click:
+                  - lvgl.page.show: home_page
+
+            - button:
+                id: nav_btn_lights
+                width: 353
+                height: 52
+                radius: 0
+                bg_color: 0x1A1A1A
+                shadow_width: 0
+                border_width: 0
+                widgets:
+                  - label:
+                      id: nav_lbl_lights
+                      text: $lightbulb
+                      text_font: nav_icon_font
+                      align: center
+                      text_color: 0x666666
+                on_click:
+                  - lvgl.page.show: lights_page
+
+            - button:
+                id: nav_btn_music
+                width: 354
+                height: 52
+                radius: 0
+                bg_color: 0x1A1A1A
+                shadow_width: 0
+                border_width: 0
+                widgets:
+                  - label:
+                      id: nav_lbl_music
+                      text: $radio
+                      text_font: nav_icon_font
+                      align: center
+                      text_color: 0x666666
+                on_click:
+                  - lvgl.page.show: music_page
+
   pages:
-    - id: main_page
-      layout: 
-        type: flex
-        flex_flow: column_wrap
-        pad_row: 10
-        pad_column: 10
-      width: 100%
-      bg_color: Black
+
+    # ── HOME PAGE ─────────────────────────────────────────────────────────
+    - id: home_page
+      bg_color: 0x000000
       bg_opa: cover
       pad_top: 42
-      pad_bottom: 5
+      pad_bottom: 52
       pad_left: 5
       pad_right: 5
-      
+      layout:
+        type: flex
+        flex_flow: column
+        pad_row: 8
+
+      on_load:
+        - lvgl.label.update:
+            id: nav_lbl_home
+            text_color: 0xFFFFFF
+        - lvgl.label.update:
+            id: nav_lbl_lights
+            text_color: 0x666666
+        - lvgl.label.update:
+            id: nav_lbl_music
+            text_color: 0x666666
+
       widgets:
-      
-        # Condensate evaporator toggle
-        - button: 
+
+        # ── Weather forecast (3 day cards) ────────────────────────────────
+        - obj:
+            width: 100%
+            height: 175
+            bg_opa: transparent
+            border_width: 0
+            pad_all: 0
+            layout:
+              type: flex
+              flex_flow: row
+              pad_column: 7
+
+            widgets:
+
+              # Today
+              - obj:
+                  width: 344
+                  height: 175
+                  bg_color: 0x0D2137
+                  border_color: 0x1A4060
+                  border_width: 1
+                  radius: 8
+                  pad_all: 0
+                  layout:
+                    type: flex
+                    flex_flow: column
+                    flex_align_cross: center
+                    flex_align_main: space_evenly
+                  widgets:
+                    - label:
+                        text: "TODAY"
+                        text_font: clockbar_font
+                        text_color: 0x6BAED6
+                    - label:
+                        id: weather_today_temp
+                        text: "--°"
+                        text_font: statistics_font
+                        text_color: 0xFFFFFF
+                    - label:
+                        id: weather_today_low
+                        text: "-- ° low"
+                        text_font: label_font
+                        text_color: 0x888888
+                    - label:
+                        id: weather_today_rain
+                        text: "-- % rain"
+                        text_font: clockbar_font
+                        text_color: 0x90CAF9
+                    - label:
+                        id: weather_today_uv
+                        text: "UV: --"
+                        text_font: clockbar_font
+                        text_color: 0xFFA726
+
+              # Tomorrow
+              - obj:
+                  width: 344
+                  height: 175
+                  bg_color: 0x12122A
+                  border_color: 0x2A2A55
+                  border_width: 1
+                  radius: 8
+                  pad_all: 0
+                  layout:
+                    type: flex
+                    flex_flow: column
+                    flex_align_cross: center
+                    flex_align_main: space_evenly
+                  widgets:
+                    - label:
+                        id: weather_tomorrow_name
+                        text: "---"
+                        text_font: clockbar_font
+                        text_color: 0x9E9EBF
+                    - label:
+                        id: weather_tomorrow_temp
+                        text: "--°"
+                        text_font: statistics_font
+                        text_color: 0xFFFFFF
+                    - label:
+                        id: weather_tomorrow_low
+                        text: "-- ° low"
+                        text_font: label_font
+                        text_color: 0x888888
+                    - label:
+                        id: weather_tomorrow_rain
+                        text: "-- % rain"
+                        text_font: clockbar_font
+                        text_color: 0x90CAF9
+                    - label:
+                        id: weather_tomorrow_uv
+                        text: "UV: --"
+                        text_font: clockbar_font
+                        text_color: 0xFFA726
+
+              # Day after tomorrow
+              - obj:
+                  width: 344
+                  height: 175
+                  bg_color: 0x12122A
+                  border_color: 0x2A2A55
+                  border_width: 1
+                  radius: 8
+                  pad_all: 0
+                  layout:
+                    type: flex
+                    flex_flow: column
+                    flex_align_cross: center
+                    flex_align_main: space_evenly
+                  widgets:
+                    - label:
+                        id: weather_day2_name
+                        text: "---"
+                        text_font: clockbar_font
+                        text_color: 0x9E9EBF
+                    - label:
+                        id: weather_day2_temp
+                        text: "--°"
+                        text_font: statistics_font
+                        text_color: 0xFFFFFF
+                    - label:
+                        id: weather_day2_low
+                        text: "-- ° low"
+                        text_font: label_font
+                        text_color: 0x888888
+                    - label:
+                        id: weather_day2_rain
+                        text: "-- % rain"
+                        text_font: clockbar_font
+                        text_color: 0x90CAF9
+                    - label:
+                        id: weather_day2_uv
+                        text: "UV: --"
+                        text_font: clockbar_font
+                        text_color: 0xFFA726
+
+        # ── Hourly forecast strip (8 slots × 2 h) ────────────────────────
+        - obj:
+            width: 100%
+            height: 85
+            bg_color: 0x111111
+            border_color: 0x222222
+            border_width: 1
+            radius: 8
+            pad_all: 4
+            layout:
+              type: flex
+              flex_flow: row
+              pad_column: 4
+
+            widgets:
+
+              - obj:
+                  flex_grow: 1
+                  height: 75
+                  bg_opa: transparent
+                  border_width: 0
+                  pad_all: 0
+                  layout:
+                    type: flex
+                    flex_flow: column
+                    flex_align_cross: center
+                    flex_align_main: space_evenly
+                  widgets:
+                    - label:
+                        id: hourly_time_0
+                        text: "--:--"
+                        text_font: clockbar_font
+                        text_color: 0x888888
+                    - label:
+                        id: hourly_temp_0
+                        text: "--°"
+                        text_font: label_font
+                        text_color: 0xFFFFFF
+                    - label:
+                        id: hourly_wind_0
+                        text: "--"
+                        text_font: clockbar_font
+                        text_color: 0x90CAF9
+
+              - obj:
+                  flex_grow: 1
+                  height: 75
+                  bg_opa: transparent
+                  border_width: 0
+                  pad_all: 0
+                  layout:
+                    type: flex
+                    flex_flow: column
+                    flex_align_cross: center
+                    flex_align_main: space_evenly
+                  widgets:
+                    - label:
+                        id: hourly_time_1
+                        text: "--:--"
+                        text_font: clockbar_font
+                        text_color: 0x888888
+                    - label:
+                        id: hourly_temp_1
+                        text: "--°"
+                        text_font: label_font
+                        text_color: 0xFFFFFF
+                    - label:
+                        id: hourly_wind_1
+                        text: "--"
+                        text_font: clockbar_font
+                        text_color: 0x90CAF9
+
+              - obj:
+                  flex_grow: 1
+                  height: 75
+                  bg_opa: transparent
+                  border_width: 0
+                  pad_all: 0
+                  layout:
+                    type: flex
+                    flex_flow: column
+                    flex_align_cross: center
+                    flex_align_main: space_evenly
+                  widgets:
+                    - label:
+                        id: hourly_time_2
+                        text: "--:--"
+                        text_font: clockbar_font
+                        text_color: 0x888888
+                    - label:
+                        id: hourly_temp_2
+                        text: "--°"
+                        text_font: label_font
+                        text_color: 0xFFFFFF
+                    - label:
+                        id: hourly_wind_2
+                        text: "--"
+                        text_font: clockbar_font
+                        text_color: 0x90CAF9
+
+              - obj:
+                  flex_grow: 1
+                  height: 75
+                  bg_opa: transparent
+                  border_width: 0
+                  pad_all: 0
+                  layout:
+                    type: flex
+                    flex_flow: column
+                    flex_align_cross: center
+                    flex_align_main: space_evenly
+                  widgets:
+                    - label:
+                        id: hourly_time_3
+                        text: "--:--"
+                        text_font: clockbar_font
+                        text_color: 0x888888
+                    - label:
+                        id: hourly_temp_3
+                        text: "--°"
+                        text_font: label_font
+                        text_color: 0xFFFFFF
+                    - label:
+                        id: hourly_wind_3
+                        text: "--"
+                        text_font: clockbar_font
+                        text_color: 0x90CAF9
+
+              - obj:
+                  flex_grow: 1
+                  height: 75
+                  bg_opa: transparent
+                  border_width: 0
+                  pad_all: 0
+                  layout:
+                    type: flex
+                    flex_flow: column
+                    flex_align_cross: center
+                    flex_align_main: space_evenly
+                  widgets:
+                    - label:
+                        id: hourly_time_4
+                        text: "--:--"
+                        text_font: clockbar_font
+                        text_color: 0x888888
+                    - label:
+                        id: hourly_temp_4
+                        text: "--°"
+                        text_font: label_font
+                        text_color: 0xFFFFFF
+                    - label:
+                        id: hourly_wind_4
+                        text: "--"
+                        text_font: clockbar_font
+                        text_color: 0x90CAF9
+
+              - obj:
+                  flex_grow: 1
+                  height: 75
+                  bg_opa: transparent
+                  border_width: 0
+                  pad_all: 0
+                  layout:
+                    type: flex
+                    flex_flow: column
+                    flex_align_cross: center
+                    flex_align_main: space_evenly
+                  widgets:
+                    - label:
+                        id: hourly_time_5
+                        text: "--:--"
+                        text_font: clockbar_font
+                        text_color: 0x888888
+                    - label:
+                        id: hourly_temp_5
+                        text: "--°"
+                        text_font: label_font
+                        text_color: 0xFFFFFF
+                    - label:
+                        id: hourly_wind_5
+                        text: "--"
+                        text_font: clockbar_font
+                        text_color: 0x90CAF9
+
+              - obj:
+                  flex_grow: 1
+                  height: 75
+                  bg_opa: transparent
+                  border_width: 0
+                  pad_all: 0
+                  layout:
+                    type: flex
+                    flex_flow: column
+                    flex_align_cross: center
+                    flex_align_main: space_evenly
+                  widgets:
+                    - label:
+                        id: hourly_time_6
+                        text: "--:--"
+                        text_font: clockbar_font
+                        text_color: 0x888888
+                    - label:
+                        id: hourly_temp_6
+                        text: "--°"
+                        text_font: label_font
+                        text_color: 0xFFFFFF
+                    - label:
+                        id: hourly_wind_6
+                        text: "--"
+                        text_font: clockbar_font
+                        text_color: 0x90CAF9
+
+              - obj:
+                  flex_grow: 1
+                  height: 75
+                  bg_opa: transparent
+                  border_width: 0
+                  pad_all: 0
+                  layout:
+                    type: flex
+                    flex_flow: column
+                    flex_align_cross: center
+                    flex_align_main: space_evenly
+                  widgets:
+                    - label:
+                        id: hourly_time_7
+                        text: "--:--"
+                        text_font: clockbar_font
+                        text_color: 0x888888
+                    - label:
+                        id: hourly_temp_7
+                        text: "--°"
+                        text_font: label_font
+                        text_color: 0xFFFFFF
+                    - label:
+                        id: hourly_wind_7
+                        text: "--"
+                        text_font: clockbar_font
+                        text_color: 0x90CAF9
+
+        # ── Garage row ────────────────────────────────────────────────────
+        - obj:
+            width: 100%
+            height: 100
+            bg_opa: transparent
+            border_width: 0
+            pad_all: 0
+            layout:
+              type: flex
+              flex_flow: row
+              pad_column: 7
+
+            widgets:
+
+              # Door status panel
+              - obj:
+                  width: 692
+                  height: 100
+                  bg_color: 0x1E1E1E
+                  border_color: 0x333333
+                  border_width: 1
+                  radius: 8
+                  pad_all: 0
+                  layout:
+                    type: flex
+                    flex_flow: column
+                    flex_align_cross: center
+                    flex_align_main: space_evenly
+                  widgets:
+                    - label:
+                        text: "GARAGE DOOR"
+                        text_font: clockbar_font
+                        text_color: 0x888888
+                    - label:
+                        id: garage_door_icon
+                        text: $garage_icon
+                        text_font: icon_font
+                        text_color: 0x4CAF50
+                    - label:
+                        id: garage_door_label
+                        text: "Closed"
+                        text_font: clockbar_font
+                        text_color: 0x4CAF50
+
+              # Garage smart plug toggle
+              - button:
+                  id: garage_plug_button
+                  width: 351
+                  height: 100
+                  checkable: true
+                  styles: control
+                  radius: 8
+                  widgets:
+                    - label:
+                        text_font: icon_font
+                        align: top_left
+                        text: $plug_on
+                    - label:
+                        align: bottom_left
+                        text: "Garage lights"
+                  on_click:
+                    - homeassistant.service:
+                        service: switch.toggle
+                        data:
+                          entity_id: switch.kitchen_plug
+
+    # ── LIGHTS PAGE ───────────────────────────────────────────────────────
+    - id: lights_page
+      bg_color: 0x000000
+      bg_opa: cover
+      pad_top: 47
+      pad_bottom: 57
+      pad_left: 5
+      pad_right: 5
+      layout:
+        type: flex
+        flex_flow: row_wrap
+        pad_row: 8
+        pad_column: 8
+
+      on_load:
+        - lvgl.label.update:
+            id: nav_lbl_home
+            text_color: 0x666666
+        - lvgl.label.update:
+            id: nav_lbl_lights
+            text_color: 0xFFFFFF
+        - lvgl.label.update:
+            id: nav_lbl_music
+            text_color: 0x666666
+
+      widgets:
+
+        - button:
+            height: $button_height
+            width: $button_width
+            checkable: true
+            id: bedroom_light_btn
+            styles: control
+            widgets:
+              - label:
+                  text_font: $icon_font
+                  align: top_left
+                  text: $nightlight
+              - label:
+                  align: bottom_left
+                  text: "Bedroom"
+            on_click:
+              - homeassistant.service:
+                  service: light.toggle
+                  data:
+                    entity_id: light.bedroom_light
+
+        - button:
+            height: $button_height
+            width: $button_width
+            checkable: true
+            id: bookcase_lamp_btn
+            styles: control
+            widgets:
+              - label:
+                  text_font: $icon_font
+                  align: top_left
+                  text: $lightbulb
+              - label:
+                  align: bottom_left
+                  text: "Bookcase"
+            on_click:
+              - homeassistant.service:
+                  service: light.toggle
+                  data:
+                    entity_id: light.bookcase_lamp
+
+        - button:
+            height: $button_height
+            width: $button_width
+            checkable: true
+            id: lounge_light_1_btn
+            styles: control
+            widgets:
+              - label:
+                  text_font: $icon_font
+                  align: top_left
+                  text: $lightbulb
+              - label:
+                  align: bottom_left
+                  text: "Lounge"
+            on_click:
+              - homeassistant.service:
+                  service: light.toggle
+                  data:
+                    entity_id: light.lounge_room_light
+
+        - button:
+            height: $button_height
+            width: $button_width
+            checkable: true
+            id: lounge_light_2_btn
+            styles: control
+            widgets:
+              - label:
+                  text_font: $icon_font
+                  align: top_left
+                  text: $lightbulb
+              - label:
+                  align: bottom_left
+                  text: "Lounge 2"
+            on_click:
+              - homeassistant.service:
+                  service: light.toggle
+                  data:
+                    entity_id: light.lounge_room_light_2
+
+        - button:
             height: $button_height
             width: $button_width
             checkable: true
@@ -57,20 +684,34 @@ lvgl:
                   text: $aircon
               - label:
                   align: bottom_left
-                  text: "Condensate evaporator"
+                  text: "Condensate evap."
             on_click:
               - homeassistant.service:
                   service: script.toggle_condensate_evaporator
 
-        - obj: # Container for grouping
-            width: 100%
-            height: 60
-            layout: horizontal
-            # flex_flow: column
-            widgets:
-              - label:
-                  id: temp_label
-                  text: "Loading Temp..."
-              - label:
-                  id: rain_chance_label
-                  text: "Loading change of rain..."
+    # ── MUSIC PAGE ────────────────────────────────────────────────────────
+    - id: music_page
+      bg_color: 0x000000
+      bg_opa: cover
+      pad_top: 47
+      pad_bottom: 57
+      pad_left: 10
+      pad_right: 10
+
+      on_load:
+        - lvgl.label.update:
+            id: nav_lbl_home
+            text_color: 0x666666
+        - lvgl.label.update:
+            id: nav_lbl_lights
+            text_color: 0x666666
+        - lvgl.label.update:
+            id: nav_lbl_music
+            text_color: 0xFFFFFF
+
+      widgets:
+        - label:
+            align: center
+            text: "Music / radio coming soon"
+            text_font: label_font
+            text_color: 0x555555

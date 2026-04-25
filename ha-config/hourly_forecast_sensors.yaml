@@ -1,0 +1,163 @@
+# Hourly forecast template sensors for the touch screen dashboard.
+#
+# HOW TO INSTALL:
+#   Copy this file to your Home Assistant config directory, then in
+#   configuration.yaml add:
+#
+#       template: !include hourly_forecast_sensors.yaml
+#
+#   If you already have a template: section, paste the trigger block below
+#   into it instead of the include.
+#
+# Shows 8 slots at 2-hour intervals (forecast[0], [2], [4] ... [14])
+# so the strip covers the next ~14 hours of the day.
+
+- trigger:
+    - trigger: time_pattern
+      minutes: "/30"
+    - trigger: homeassistant
+      event: start
+  action:
+    - action: weather.get_forecasts
+      target:
+        entity_id: weather.clovelly_hourly
+      data:
+        type: hourly
+      response_variable: hf
+  sensor:
+
+    # ── Slot 0 ─────────────────────────────────────────────────────────────
+    - name: "Clovelly Hour 0 Time"
+      unique_id: clovelly_hour_0_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[0].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 0 Temp"
+      unique_id: clovelly_hour_0_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[0].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 0 Wind"
+      unique_id: clovelly_hour_0_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[0] %}
+        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
+        {% set brg = f.wind_bearing | default(0) | float %}
+        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+
+    # ── Slot 1 (2 h ahead) ─────────────────────────────────────────────────
+    - name: "Clovelly Hour 1 Time"
+      unique_id: clovelly_hour_1_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[2].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 1 Temp"
+      unique_id: clovelly_hour_1_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[2].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 1 Wind"
+      unique_id: clovelly_hour_1_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[2] %}
+        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
+        {% set brg = f.wind_bearing | default(0) | float %}
+        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+
+    # ── Slot 2 (4 h ahead) ─────────────────────────────────────────────────
+    - name: "Clovelly Hour 2 Time"
+      unique_id: clovelly_hour_2_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[4].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 2 Temp"
+      unique_id: clovelly_hour_2_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[4].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 2 Wind"
+      unique_id: clovelly_hour_2_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[4] %}
+        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
+        {% set brg = f.wind_bearing | default(0) | float %}
+        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+
+    # ── Slot 3 (6 h ahead) ─────────────────────────────────────────────────
+    - name: "Clovelly Hour 3 Time"
+      unique_id: clovelly_hour_3_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[6].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 3 Temp"
+      unique_id: clovelly_hour_3_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[6].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 3 Wind"
+      unique_id: clovelly_hour_3_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[6] %}
+        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
+        {% set brg = f.wind_bearing | default(0) | float %}
+        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+
+    # ── Slot 4 (8 h ahead) ─────────────────────────────────────────────────
+    - name: "Clovelly Hour 4 Time"
+      unique_id: clovelly_hour_4_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[8].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 4 Temp"
+      unique_id: clovelly_hour_4_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[8].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 4 Wind"
+      unique_id: clovelly_hour_4_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[8] %}
+        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
+        {% set brg = f.wind_bearing | default(0) | float %}
+        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+
+    # ── Slot 5 (10 h ahead) ────────────────────────────────────────────────
+    - name: "Clovelly Hour 5 Time"
+      unique_id: clovelly_hour_5_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[10].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 5 Temp"
+      unique_id: clovelly_hour_5_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[10].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 5 Wind"
+      unique_id: clovelly_hour_5_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[10] %}
+        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
+        {% set brg = f.wind_bearing | default(0) | float %}
+        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+
+    # ── Slot 6 (12 h ahead) ────────────────────────────────────────────────
+    - name: "Clovelly Hour 6 Time"
+      unique_id: clovelly_hour_6_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[12].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 6 Temp"
+      unique_id: clovelly_hour_6_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[12].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 6 Wind"
+      unique_id: clovelly_hour_6_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[12] %}
+        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
+        {% set brg = f.wind_bearing | default(0) | float %}
+        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+
+    # ── Slot 7 (14 h ahead) ────────────────────────────────────────────────
+    - name: "Clovelly Hour 7 Time"
+      unique_id: clovelly_hour_7_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[14].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 7 Temp"
+      unique_id: clovelly_hour_7_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[14].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 7 Wind"
+      unique_id: clovelly_hour_7_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[14] %}
+        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
+        {% set brg = f.wind_bearing | default(0) | float %}
+        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
