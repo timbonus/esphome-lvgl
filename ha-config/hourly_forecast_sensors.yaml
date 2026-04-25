@@ -1,16 +1,7 @@
 # Hourly forecast template sensors for the touch screen dashboard.
 #
-# HOW TO INSTALL:
-#   Copy this file to your Home Assistant config directory, then in
-#   configuration.yaml add:
-#
-#       template: !include hourly_forecast_sensors.yaml
-#
-#   If you already have a template: section, paste the trigger block below
-#   into it instead of the include.
-#
-# Shows 8 slots at 2-hour intervals (forecast[0], [2], [4] ... [14])
-# so the strip covers the next ~14 hours of the day.
+# HOW TO INSTALL — see daily_forecast_sensors.yaml for instructions.
+# Both files must be included; see Option B in that file.
 
 - trigger:
     - trigger: time_pattern
@@ -39,9 +30,9 @@
       unique_id: clovelly_hour_0_wind
       state: >
         {% set f = hf['weather.clovelly_hourly'].forecast[0] %}
-        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
-        {% set brg = f.wind_bearing | default(0) | float %}
-        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
 
     # ── Slot 1 (2 h ahead) ─────────────────────────────────────────────────
     - name: "Clovelly Hour 1 Time"
@@ -56,9 +47,9 @@
       unique_id: clovelly_hour_1_wind
       state: >
         {% set f = hf['weather.clovelly_hourly'].forecast[2] %}
-        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
-        {% set brg = f.wind_bearing | default(0) | float %}
-        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
 
     # ── Slot 2 (4 h ahead) ─────────────────────────────────────────────────
     - name: "Clovelly Hour 2 Time"
@@ -73,9 +64,9 @@
       unique_id: clovelly_hour_2_wind
       state: >
         {% set f = hf['weather.clovelly_hourly'].forecast[4] %}
-        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
-        {% set brg = f.wind_bearing | default(0) | float %}
-        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
 
     # ── Slot 3 (6 h ahead) ─────────────────────────────────────────────────
     - name: "Clovelly Hour 3 Time"
@@ -90,9 +81,9 @@
       unique_id: clovelly_hour_3_wind
       state: >
         {% set f = hf['weather.clovelly_hourly'].forecast[6] %}
-        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
-        {% set brg = f.wind_bearing | default(0) | float %}
-        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
 
     # ── Slot 4 (8 h ahead) ─────────────────────────────────────────────────
     - name: "Clovelly Hour 4 Time"
@@ -107,9 +98,9 @@
       unique_id: clovelly_hour_4_wind
       state: >
         {% set f = hf['weather.clovelly_hourly'].forecast[8] %}
-        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
-        {% set brg = f.wind_bearing | default(0) | float %}
-        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
 
     # ── Slot 5 (10 h ahead) ────────────────────────────────────────────────
     - name: "Clovelly Hour 5 Time"
@@ -124,9 +115,9 @@
       unique_id: clovelly_hour_5_wind
       state: >
         {% set f = hf['weather.clovelly_hourly'].forecast[10] %}
-        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
-        {% set brg = f.wind_bearing | default(0) | float %}
-        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
 
     # ── Slot 6 (12 h ahead) ────────────────────────────────────────────────
     - name: "Clovelly Hour 6 Time"
@@ -141,9 +132,9 @@
       unique_id: clovelly_hour_6_wind
       state: >
         {% set f = hf['weather.clovelly_hourly'].forecast[12] %}
-        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
-        {% set brg = f.wind_bearing | default(0) | float %}
-        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
 
     # ── Slot 7 (14 h ahead) ────────────────────────────────────────────────
     - name: "Clovelly Hour 7 Time"
@@ -158,6 +149,6 @@
       unique_id: clovelly_hour_7_wind
       state: >
         {% set f = hf['weather.clovelly_hourly'].forecast[14] %}
-        {% set dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'] %}
-        {% set brg = f.wind_bearing | default(0) | float %}
-        {{ dirs[(((brg + 11.25) % 360) / 22.5) | int] }} {{ f.wind_speed | round(0) | int }}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}

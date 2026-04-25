@@ -91,24 +91,23 @@ binary_sensor:
 
 sensor:
 
-  # Current outdoor temperature (BOM observation station — drives top-bar label)
+  # Current temperature from weather.clovelly entity attribute
   - platform: homeassistant
     id: ha_temp
-    entity_id: sensor.sydney_observatory_hill_temp
+    entity_id: weather.clovelly
+    attribute: temperature
     internal: true
     on_value:
       then:
         - lvgl.label.update:
             id: temperatures
-            text: !lambda |-
-              return str_sprintf("%.0f°C", x).c_str();
+            text: !lambda return str_sprintf("%.0f°C", x).c_str();
 
-  # ── Clovelly daily forecast ─────────────────────────────────────────────
-  # Entity names follow the same _0/_1/_2 pattern as the confirmed rain_chance sensors.
+  # ── Clovelly daily forecast (from ha-config/weather_sensors.yaml) ─────────
 
   - platform: homeassistant
     id: ha_max_0
-    entity_id: sensor.clovelly_max_0
+    entity_id: sensor.clovelly_daily_0_high
     internal: true
     on_value:
       then:
@@ -118,7 +117,7 @@ sensor:
 
   - platform: homeassistant
     id: ha_min_0
-    entity_id: sensor.clovelly_min_0
+    entity_id: sensor.clovelly_daily_0_low
     internal: true
     on_value:
       then:
@@ -128,7 +127,7 @@ sensor:
 
   - platform: homeassistant
     id: ha_rain_0
-    entity_id: sensor.clovelly_rain_chance_0
+    entity_id: sensor.clovelly_daily_0_rain
     internal: true
     on_value:
       then:
@@ -138,7 +137,7 @@ sensor:
 
   - platform: homeassistant
     id: ha_max_1
-    entity_id: sensor.clovelly_max_1
+    entity_id: sensor.clovelly_daily_1_high
     internal: true
     on_value:
       then:
@@ -148,7 +147,7 @@ sensor:
 
   - platform: homeassistant
     id: ha_min_1
-    entity_id: sensor.clovelly_min_1
+    entity_id: sensor.clovelly_daily_1_low
     internal: true
     on_value:
       then:
@@ -158,7 +157,7 @@ sensor:
 
   - platform: homeassistant
     id: ha_rain_1
-    entity_id: sensor.clovelly_rain_chance_1
+    entity_id: sensor.clovelly_daily_1_rain
     internal: true
     on_value:
       then:
@@ -168,7 +167,7 @@ sensor:
 
   - platform: homeassistant
     id: ha_max_2
-    entity_id: sensor.clovelly_max_2
+    entity_id: sensor.clovelly_daily_2_high
     internal: true
     on_value:
       then:
@@ -178,7 +177,7 @@ sensor:
 
   - platform: homeassistant
     id: ha_min_2
-    entity_id: sensor.clovelly_min_2
+    entity_id: sensor.clovelly_daily_2_low
     internal: true
     on_value:
       then:
@@ -188,7 +187,7 @@ sensor:
 
   - platform: homeassistant
     id: ha_rain_2
-    entity_id: sensor.clovelly_rain_chance_2
+    entity_id: sensor.clovelly_daily_2_rain
     internal: true
     on_value:
       then:
@@ -196,84 +195,229 @@ sensor:
             id: weather_day2_rain
             text: !lambda return str_sprintf("%.0f%% rain", x).c_str();
 
-  # ── Hourly forecast temperatures (sensor.clovelly_hour_N_temp) ───────────
+  # ── Hourly forecast temperatures — also feed the temperature chart ────────
+
   - platform: homeassistant
     id: hourly_temp_s0
     entity_id: sensor.clovelly_hour_0_temp
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_temp_0
-          text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lvgl.label.update:
+            id: hourly_temp_0
+            text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_temp_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_temp_chart), ser);
+            data[0] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_temp_chart));
+
   - platform: homeassistant
     id: hourly_temp_s1
     entity_id: sensor.clovelly_hour_1_temp
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_temp_1
-          text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lvgl.label.update:
+            id: hourly_temp_1
+            text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_temp_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_temp_chart), ser);
+            data[1] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_temp_chart));
+
   - platform: homeassistant
     id: hourly_temp_s2
     entity_id: sensor.clovelly_hour_2_temp
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_temp_2
-          text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lvgl.label.update:
+            id: hourly_temp_2
+            text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_temp_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_temp_chart), ser);
+            data[2] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_temp_chart));
+
   - platform: homeassistant
     id: hourly_temp_s3
     entity_id: sensor.clovelly_hour_3_temp
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_temp_3
-          text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lvgl.label.update:
+            id: hourly_temp_3
+            text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_temp_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_temp_chart), ser);
+            data[3] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_temp_chart));
+
   - platform: homeassistant
     id: hourly_temp_s4
     entity_id: sensor.clovelly_hour_4_temp
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_temp_4
-          text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lvgl.label.update:
+            id: hourly_temp_4
+            text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_temp_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_temp_chart), ser);
+            data[4] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_temp_chart));
+
   - platform: homeassistant
     id: hourly_temp_s5
     entity_id: sensor.clovelly_hour_5_temp
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_temp_5
-          text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lvgl.label.update:
+            id: hourly_temp_5
+            text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_temp_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_temp_chart), ser);
+            data[5] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_temp_chart));
+
   - platform: homeassistant
     id: hourly_temp_s6
     entity_id: sensor.clovelly_hour_6_temp
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_temp_6
-          text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lvgl.label.update:
+            id: hourly_temp_6
+            text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_temp_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_temp_chart), ser);
+            data[6] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_temp_chart));
+
   - platform: homeassistant
     id: hourly_temp_s7
     entity_id: sensor.clovelly_hour_7_temp
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_temp_7
-          text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lvgl.label.update:
+            id: hourly_temp_7
+            text: !lambda return str_sprintf("%.0f°", x).c_str();
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_temp_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_temp_chart), ser);
+            data[7] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_temp_chart));
+
+  # ── Hourly wind speed (numeric) for wind chart ────────────────────────────
+
+  - platform: homeassistant
+    id: chart_wind_s0
+    entity_id: sensor.clovelly_hour_0_wind_speed
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_wind_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_wind_chart), ser);
+            data[0] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_wind_chart));
+
+  - platform: homeassistant
+    id: chart_wind_s1
+    entity_id: sensor.clovelly_hour_1_wind_speed
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_wind_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_wind_chart), ser);
+            data[1] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_wind_chart));
+
+  - platform: homeassistant
+    id: chart_wind_s2
+    entity_id: sensor.clovelly_hour_2_wind_speed
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_wind_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_wind_chart), ser);
+            data[2] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_wind_chart));
+
+  - platform: homeassistant
+    id: chart_wind_s3
+    entity_id: sensor.clovelly_hour_3_wind_speed
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_wind_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_wind_chart), ser);
+            data[3] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_wind_chart));
+
+  - platform: homeassistant
+    id: chart_wind_s4
+    entity_id: sensor.clovelly_hour_4_wind_speed
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_wind_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_wind_chart), ser);
+            data[4] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_wind_chart));
+
+  - platform: homeassistant
+    id: chart_wind_s5
+    entity_id: sensor.clovelly_hour_5_wind_speed
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_wind_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_wind_chart), ser);
+            data[5] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_wind_chart));
+
+  - platform: homeassistant
+    id: chart_wind_s6
+    entity_id: sensor.clovelly_hour_6_wind_speed
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_wind_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_wind_chart), ser);
+            data[6] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_wind_chart));
+
+  - platform: homeassistant
+    id: chart_wind_s7
+    entity_id: sensor.clovelly_hour_7_wind_speed
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            auto * ser = lv_chart_get_series_next(id(weather_wind_chart), nullptr);
+            lv_coord_t * data = lv_chart_get_y_array(id(weather_wind_chart), ser);
+            data[7] = (lv_coord_t)x;
+            lv_chart_refresh(id(weather_wind_chart));
 
 text_sensor:
 
   # UV alert level — BOM returns text: "Low", "Moderate", "High", "Very High", "Extreme"
-  # If your integration uses a numeric uv_index instead, switch these to numeric sensor above.
   - platform: homeassistant
     id: ha_uv_0
     entity_id: sensor.clovelly_uv_alert_0
@@ -282,7 +426,7 @@ text_sensor:
       then:
         - lvgl.label.update:
             id: weather_today_uv
-            text: !lambda return ("UV: " + x).c_str();
+            text: !lambda 'return ("UV: " + x).c_str();'
 
   - platform: homeassistant
     id: ha_uv_1
@@ -292,7 +436,7 @@ text_sensor:
       then:
         - lvgl.label.update:
             id: weather_tomorrow_uv
-            text: !lambda return ("UV: " + x).c_str();
+            text: !lambda 'return ("UV: " + x).c_str();'
 
   - platform: homeassistant
     id: ha_uv_2
@@ -302,83 +446,116 @@ text_sensor:
       then:
         - lvgl.label.update:
             id: weather_day2_uv
-            text: !lambda return ("UV: " + x).c_str();
+            text: !lambda 'return ("UV: " + x).c_str();'
 
-  # ── Hourly time labels (sensor.clovelly_hour_N_time) ─────────────────────
+  # ── Hourly time labels — also feed chart time labels ──────────────────────
+
   - platform: homeassistant
     id: hourly_time_s0
     entity_id: sensor.clovelly_hour_0_time
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_time_0
-          text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: hourly_time_0
+            text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: chart_time_0
+            text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_time_s1
     entity_id: sensor.clovelly_hour_1_time
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_time_1
-          text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: hourly_time_1
+            text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: chart_time_1
+            text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_time_s2
     entity_id: sensor.clovelly_hour_2_time
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_time_2
-          text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: hourly_time_2
+            text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: chart_time_2
+            text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_time_s3
     entity_id: sensor.clovelly_hour_3_time
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_time_3
-          text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: hourly_time_3
+            text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: chart_time_3
+            text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_time_s4
     entity_id: sensor.clovelly_hour_4_time
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_time_4
-          text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: hourly_time_4
+            text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: chart_time_4
+            text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_time_s5
     entity_id: sensor.clovelly_hour_5_time
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_time_5
-          text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: hourly_time_5
+            text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: chart_time_5
+            text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_time_s6
     entity_id: sensor.clovelly_hour_6_time
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_time_6
-          text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: hourly_time_6
+            text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: chart_time_6
+            text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_time_s7
     entity_id: sensor.clovelly_hour_7_time
     internal: true
     on_value:
       then:
-        lvgl.label.update:
-          id: hourly_time_7
-          text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: hourly_time_7
+            text: !lambda return x.c_str();
+        - lvgl.label.update:
+            id: chart_time_7
+            text: !lambda return x.c_str();
 
-  # ── Hourly wind labels (sensor.clovelly_hour_N_wind) ─────────────────────
+  # ── Hourly wind labels (combined string for hourly strip) ─────────────────
+
   - platform: homeassistant
     id: hourly_wind_s0
     entity_id: sensor.clovelly_hour_0_wind
@@ -388,6 +565,7 @@ text_sensor:
         lvgl.label.update:
           id: hourly_wind_0
           text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_wind_s1
     entity_id: sensor.clovelly_hour_1_wind
@@ -397,6 +575,7 @@ text_sensor:
         lvgl.label.update:
           id: hourly_wind_1
           text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_wind_s2
     entity_id: sensor.clovelly_hour_2_wind
@@ -406,6 +585,7 @@ text_sensor:
         lvgl.label.update:
           id: hourly_wind_2
           text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_wind_s3
     entity_id: sensor.clovelly_hour_3_wind
@@ -415,6 +595,7 @@ text_sensor:
         lvgl.label.update:
           id: hourly_wind_3
           text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_wind_s4
     entity_id: sensor.clovelly_hour_4_wind
@@ -424,6 +605,7 @@ text_sensor:
         lvgl.label.update:
           id: hourly_wind_4
           text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_wind_s5
     entity_id: sensor.clovelly_hour_5_wind
@@ -433,6 +615,7 @@ text_sensor:
         lvgl.label.update:
           id: hourly_wind_5
           text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_wind_s6
     entity_id: sensor.clovelly_hour_6_wind
@@ -442,6 +625,7 @@ text_sensor:
         lvgl.label.update:
           id: hourly_wind_6
           text: !lambda return x.c_str();
+
   - platform: homeassistant
     id: hourly_wind_s7
     entity_id: sensor.clovelly_hour_7_wind
@@ -451,3 +635,165 @@ text_sensor:
         lvgl.label.update:
           id: hourly_wind_7
           text: !lambda return x.c_str();
+
+  # ── Wind bearing strings — rotate chart arrow widgets ─────────────────────
+
+  - platform: homeassistant
+    id: chart_bearing_s0
+    entity_id: sensor.clovelly_hour_0_wind_bearing
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            const std::string b = x;
+            int16_t a = 0;
+            if (b == "NNE") a = 225; else if (b == "NE") a = 450;
+            else if (b == "ENE") a = 675; else if (b == "E") a = 900;
+            else if (b == "ESE") a = 1125; else if (b == "SE") a = 1350;
+            else if (b == "SSE") a = 1575; else if (b == "S") a = 1800;
+            else if (b == "SSW") a = 2025; else if (b == "SW") a = 2250;
+            else if (b == "WSW") a = 2475; else if (b == "W") a = 2700;
+            else if (b == "WNW") a = 2925; else if (b == "NW") a = 3150;
+            else if (b == "NNW") a = 3375;
+            lv_obj_set_style_transform_angle(id(wind_arrow_0), a, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_invalidate(id(wind_arrow_0));
+
+  - platform: homeassistant
+    id: chart_bearing_s1
+    entity_id: sensor.clovelly_hour_1_wind_bearing
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            const std::string b = x;
+            int16_t a = 0;
+            if (b == "NNE") a = 225; else if (b == "NE") a = 450;
+            else if (b == "ENE") a = 675; else if (b == "E") a = 900;
+            else if (b == "ESE") a = 1125; else if (b == "SE") a = 1350;
+            else if (b == "SSE") a = 1575; else if (b == "S") a = 1800;
+            else if (b == "SSW") a = 2025; else if (b == "SW") a = 2250;
+            else if (b == "WSW") a = 2475; else if (b == "W") a = 2700;
+            else if (b == "WNW") a = 2925; else if (b == "NW") a = 3150;
+            else if (b == "NNW") a = 3375;
+            lv_obj_set_style_transform_angle(id(wind_arrow_1), a, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_invalidate(id(wind_arrow_1));
+
+  - platform: homeassistant
+    id: chart_bearing_s2
+    entity_id: sensor.clovelly_hour_2_wind_bearing
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            const std::string b = x;
+            int16_t a = 0;
+            if (b == "NNE") a = 225; else if (b == "NE") a = 450;
+            else if (b == "ENE") a = 675; else if (b == "E") a = 900;
+            else if (b == "ESE") a = 1125; else if (b == "SE") a = 1350;
+            else if (b == "SSE") a = 1575; else if (b == "S") a = 1800;
+            else if (b == "SSW") a = 2025; else if (b == "SW") a = 2250;
+            else if (b == "WSW") a = 2475; else if (b == "W") a = 2700;
+            else if (b == "WNW") a = 2925; else if (b == "NW") a = 3150;
+            else if (b == "NNW") a = 3375;
+            lv_obj_set_style_transform_angle(id(wind_arrow_2), a, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_invalidate(id(wind_arrow_2));
+
+  - platform: homeassistant
+    id: chart_bearing_s3
+    entity_id: sensor.clovelly_hour_3_wind_bearing
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            const std::string b = x;
+            int16_t a = 0;
+            if (b == "NNE") a = 225; else if (b == "NE") a = 450;
+            else if (b == "ENE") a = 675; else if (b == "E") a = 900;
+            else if (b == "ESE") a = 1125; else if (b == "SE") a = 1350;
+            else if (b == "SSE") a = 1575; else if (b == "S") a = 1800;
+            else if (b == "SSW") a = 2025; else if (b == "SW") a = 2250;
+            else if (b == "WSW") a = 2475; else if (b == "W") a = 2700;
+            else if (b == "WNW") a = 2925; else if (b == "NW") a = 3150;
+            else if (b == "NNW") a = 3375;
+            lv_obj_set_style_transform_angle(id(wind_arrow_3), a, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_invalidate(id(wind_arrow_3));
+
+  - platform: homeassistant
+    id: chart_bearing_s4
+    entity_id: sensor.clovelly_hour_4_wind_bearing
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            const std::string b = x;
+            int16_t a = 0;
+            if (b == "NNE") a = 225; else if (b == "NE") a = 450;
+            else if (b == "ENE") a = 675; else if (b == "E") a = 900;
+            else if (b == "ESE") a = 1125; else if (b == "SE") a = 1350;
+            else if (b == "SSE") a = 1575; else if (b == "S") a = 1800;
+            else if (b == "SSW") a = 2025; else if (b == "SW") a = 2250;
+            else if (b == "WSW") a = 2475; else if (b == "W") a = 2700;
+            else if (b == "WNW") a = 2925; else if (b == "NW") a = 3150;
+            else if (b == "NNW") a = 3375;
+            lv_obj_set_style_transform_angle(id(wind_arrow_4), a, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_invalidate(id(wind_arrow_4));
+
+  - platform: homeassistant
+    id: chart_bearing_s5
+    entity_id: sensor.clovelly_hour_5_wind_bearing
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            const std::string b = x;
+            int16_t a = 0;
+            if (b == "NNE") a = 225; else if (b == "NE") a = 450;
+            else if (b == "ENE") a = 675; else if (b == "E") a = 900;
+            else if (b == "ESE") a = 1125; else if (b == "SE") a = 1350;
+            else if (b == "SSE") a = 1575; else if (b == "S") a = 1800;
+            else if (b == "SSW") a = 2025; else if (b == "SW") a = 2250;
+            else if (b == "WSW") a = 2475; else if (b == "W") a = 2700;
+            else if (b == "WNW") a = 2925; else if (b == "NW") a = 3150;
+            else if (b == "NNW") a = 3375;
+            lv_obj_set_style_transform_angle(id(wind_arrow_5), a, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_invalidate(id(wind_arrow_5));
+
+  - platform: homeassistant
+    id: chart_bearing_s6
+    entity_id: sensor.clovelly_hour_6_wind_bearing
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            const std::string b = x;
+            int16_t a = 0;
+            if (b == "NNE") a = 225; else if (b == "NE") a = 450;
+            else if (b == "ENE") a = 675; else if (b == "E") a = 900;
+            else if (b == "ESE") a = 1125; else if (b == "SE") a = 1350;
+            else if (b == "SSE") a = 1575; else if (b == "S") a = 1800;
+            else if (b == "SSW") a = 2025; else if (b == "SW") a = 2250;
+            else if (b == "WSW") a = 2475; else if (b == "W") a = 2700;
+            else if (b == "WNW") a = 2925; else if (b == "NW") a = 3150;
+            else if (b == "NNW") a = 3375;
+            lv_obj_set_style_transform_angle(id(wind_arrow_6), a, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_invalidate(id(wind_arrow_6));
+
+  - platform: homeassistant
+    id: chart_bearing_s7
+    entity_id: sensor.clovelly_hour_7_wind_bearing
+    internal: true
+    on_value:
+      then:
+        - lambda: |-
+            const std::string b = x;
+            int16_t a = 0;
+            if (b == "NNE") a = 225; else if (b == "NE") a = 450;
+            else if (b == "ENE") a = 675; else if (b == "E") a = 900;
+            else if (b == "ESE") a = 1125; else if (b == "SE") a = 1350;
+            else if (b == "SSE") a = 1575; else if (b == "S") a = 1800;
+            else if (b == "SSW") a = 2025; else if (b == "SW") a = 2250;
+            else if (b == "WSW") a = 2475; else if (b == "W") a = 2700;
+            else if (b == "WNW") a = 2925; else if (b == "NW") a = 3150;
+            else if (b == "NNW") a = 3375;
+            lv_obj_set_style_transform_angle(id(wind_arrow_7), a, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_invalidate(id(wind_arrow_7));

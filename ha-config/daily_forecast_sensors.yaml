@@ -1,0 +1,89 @@
+# Daily forecast template sensors for the 3-day weather cards.
+#
+# HOW TO INSTALL:
+#   Option A — dedicated file (recommended if you have no existing templates):
+#     Copy to your HA config directory, then add to configuration.yaml:
+#       template: !include daily_forecast_sensors.yaml
+#
+#   Option B — if you already have template: !include hourly_forecast_sensors.yaml,
+#     change that to a list:
+#       template:
+#         - !include hourly_forecast_sensors.yaml
+#         - !include daily_forecast_sensors.yaml
+#
+# Requires weather.clovelly to support daily forecasts (type: daily).
+# The bremor BOM integration creates this entity for the daily forecast.
+
+- trigger:
+    - trigger: time_pattern
+      hours: "/1"
+    - trigger: homeassistant
+      event: start
+  action:
+    - action: weather.get_forecasts
+      target:
+        entity_id: weather.clovelly
+      data:
+        type: daily
+      response_variable: df
+  sensor:
+
+    # ── Today (day 0) ──────────────────────────────────────────────────────
+    - name: "Clovelly Daily 0 High"
+      unique_id: clovelly_daily_0_high
+      unit_of_measurement: "°C"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[0] %}
+        {{ f.get('temperature', f.get('templow', none)) | round(0) | int }}
+    - name: "Clovelly Daily 0 Low"
+      unique_id: clovelly_daily_0_low
+      unit_of_measurement: "°C"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[0] %}
+        {{ f.get('templow', f.get('temperature', none)) | round(0) | int }}
+    - name: "Clovelly Daily 0 Rain"
+      unique_id: clovelly_daily_0_rain
+      unit_of_measurement: "%"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[0] %}
+        {{ (f.get('precipitation_probability') or f.get('precipitation', 0)) | round(0) | int }}
+
+    # ── Tomorrow (day 1) ───────────────────────────────────────────────────
+    - name: "Clovelly Daily 1 High"
+      unique_id: clovelly_daily_1_high
+      unit_of_measurement: "°C"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[1] %}
+        {{ f.get('temperature', f.get('templow', none)) | round(0) | int }}
+    - name: "Clovelly Daily 1 Low"
+      unique_id: clovelly_daily_1_low
+      unit_of_measurement: "°C"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[1] %}
+        {{ f.get('templow', f.get('temperature', none)) | round(0) | int }}
+    - name: "Clovelly Daily 1 Rain"
+      unique_id: clovelly_daily_1_rain
+      unit_of_measurement: "%"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[1] %}
+        {{ (f.get('precipitation_probability') or f.get('precipitation', 0)) | round(0) | int }}
+
+    # ── Day after tomorrow (day 2) ─────────────────────────────────────────
+    - name: "Clovelly Daily 2 High"
+      unique_id: clovelly_daily_2_high
+      unit_of_measurement: "°C"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[2] %}
+        {{ f.get('temperature', f.get('templow', none)) | round(0) | int }}
+    - name: "Clovelly Daily 2 Low"
+      unique_id: clovelly_daily_2_low
+      unit_of_measurement: "°C"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[2] %}
+        {{ f.get('templow', f.get('temperature', none)) | round(0) | int }}
+    - name: "Clovelly Daily 2 Rain"
+      unique_id: clovelly_daily_2_rain
+      unit_of_measurement: "%"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[2] %}
+        {{ (f.get('precipitation_probability') or f.get('precipitation', 0)) | round(0) | int }}

@@ -126,7 +126,7 @@ lvgl:
         - obj:
             width: 100%
             height: 175
-            bg_opa: transparent
+            bg_opa: 0
             border_width: 0
             pad_all: 0
             layout:
@@ -150,6 +150,8 @@ lvgl:
                     flex_flow: column
                     flex_align_cross: center
                     flex_align_main: space_evenly
+                  on_click:
+                    - lvgl.page.show: weather_page
                   widgets:
                     - label:
                         text: "TODAY"
@@ -190,6 +192,8 @@ lvgl:
                     flex_flow: column
                     flex_align_cross: center
                     flex_align_main: space_evenly
+                  on_click:
+                    - lvgl.page.show: weather_page
                   widgets:
                     - label:
                         id: weather_tomorrow_name
@@ -231,6 +235,8 @@ lvgl:
                     flex_flow: column
                     flex_align_cross: center
                     flex_align_main: space_evenly
+                  on_click:
+                    - lvgl.page.show: weather_page
                   widgets:
                     - label:
                         id: weather_day2_name
@@ -277,7 +283,7 @@ lvgl:
               - obj:
                   flex_grow: 1
                   height: 75
-                  bg_opa: transparent
+                  bg_opa: 0
                   border_width: 0
                   pad_all: 0
                   layout:
@@ -305,7 +311,7 @@ lvgl:
               - obj:
                   flex_grow: 1
                   height: 75
-                  bg_opa: transparent
+                  bg_opa: 0
                   border_width: 0
                   pad_all: 0
                   layout:
@@ -333,7 +339,7 @@ lvgl:
               - obj:
                   flex_grow: 1
                   height: 75
-                  bg_opa: transparent
+                  bg_opa: 0
                   border_width: 0
                   pad_all: 0
                   layout:
@@ -361,7 +367,7 @@ lvgl:
               - obj:
                   flex_grow: 1
                   height: 75
-                  bg_opa: transparent
+                  bg_opa: 0
                   border_width: 0
                   pad_all: 0
                   layout:
@@ -389,7 +395,7 @@ lvgl:
               - obj:
                   flex_grow: 1
                   height: 75
-                  bg_opa: transparent
+                  bg_opa: 0
                   border_width: 0
                   pad_all: 0
                   layout:
@@ -417,7 +423,7 @@ lvgl:
               - obj:
                   flex_grow: 1
                   height: 75
-                  bg_opa: transparent
+                  bg_opa: 0
                   border_width: 0
                   pad_all: 0
                   layout:
@@ -445,7 +451,7 @@ lvgl:
               - obj:
                   flex_grow: 1
                   height: 75
-                  bg_opa: transparent
+                  bg_opa: 0
                   border_width: 0
                   pad_all: 0
                   layout:
@@ -473,7 +479,7 @@ lvgl:
               - obj:
                   flex_grow: 1
                   height: 75
-                  bg_opa: transparent
+                  bg_opa: 0
                   border_width: 0
                   pad_all: 0
                   layout:
@@ -501,8 +507,8 @@ lvgl:
         # ── Garage row ────────────────────────────────────────────────────
         - obj:
             width: 100%
-            height: 100
-            bg_opa: transparent
+            height: 150
+            bg_opa: 0
             border_width: 0
             pad_all: 0
             layout:
@@ -514,8 +520,8 @@ lvgl:
 
               # Door status panel
               - obj:
-                  width: 692
-                  height: 100
+                  width: 300
+                  height: 150
                   bg_color: 0x1E1E1E
                   border_color: 0x333333
                   border_width: 1
@@ -545,8 +551,8 @@ lvgl:
               # Garage smart plug toggle
               - button:
                   id: garage_plug_button
-                  width: 351
-                  height: 100
+                  width: 300
+                  height: 150
                   checkable: true
                   styles: control
                   radius: 8
@@ -715,3 +721,225 @@ lvgl:
             text: "Music / radio coming soon"
             text_font: label_font
             text_color: 0x555555
+
+    # ── WEATHER DETAIL PAGE ───────────────────────────────────────────────
+    - id: weather_page
+      bg_color: 0x000000
+      bg_opa: cover
+      pad_top: 42
+      pad_bottom: 52
+      pad_left: 5
+      pad_right: 5
+      layout:
+        type: flex
+        flex_flow: column
+        pad_row: 4
+
+      on_load:
+        - lvgl.label.update:
+            id: nav_lbl_home
+            text_color: 0xFFFFFF
+        - lvgl.label.update:
+            id: nav_lbl_lights
+            text_color: 0x666666
+        - lvgl.label.update:
+            id: nav_lbl_music
+            text_color: 0x666666
+
+      widgets:
+
+        # Page title
+        - label:
+            text: "WEATHER DETAIL"
+            text_font: clockbar_font
+            text_color: 0x6BAED6
+            width: 100%
+            text_align: center
+
+        # Temperature line chart (°C over next 14 h)
+        - chart:
+            id: weather_temp_chart
+            width: 100%
+            height: 160
+            chart_type: line
+            min_value: 0
+            max_value: 40
+            point_count: 8
+            update_mode: circular
+            bg_color: 0x111111
+            bg_opa: 255
+            border_color: 0x333333
+            border_width: 1
+            radius: 6
+            pad_all: 0
+            series:
+              - color: 0xFF7043
+                id: weather_temp_series
+
+        # Wind speed bar chart (km/h)
+        - chart:
+            id: weather_wind_chart
+            width: 100%
+            height: 96
+            chart_type: bar
+            min_value: 0
+            max_value: 60
+            point_count: 8
+            update_mode: circular
+            bg_color: 0x111111
+            bg_opa: 255
+            border_color: 0x333333
+            border_width: 1
+            radius: 6
+            pad_all: 0
+            series:
+              - color: 0x4FC3F7
+                id: weather_wind_series
+
+        # Wind direction arrows — one per slot, rotated via transform_angle
+        - obj:
+            width: 100%
+            height: 50
+            bg_opa: 0
+            border_width: 0
+            pad_all: 0
+            layout:
+              type: flex
+              flex_flow: row
+              flex_align_main: space_between
+              flex_align_cross: center
+            widgets:
+              - label:
+                  id: wind_arrow_0
+                  text: "\U000F005D"
+                  text_font: arrow_font
+                  text_color: 0x4FC3F7
+                  width: 36
+                  height: 36
+                  text_align: center
+              - label:
+                  id: wind_arrow_1
+                  text: "\U000F005D"
+                  text_font: arrow_font
+                  text_color: 0x4FC3F7
+                  width: 36
+                  height: 36
+                  text_align: center
+              - label:
+                  id: wind_arrow_2
+                  text: "\U000F005D"
+                  text_font: arrow_font
+                  text_color: 0x4FC3F7
+                  width: 36
+                  height: 36
+                  text_align: center
+              - label:
+                  id: wind_arrow_3
+                  text: "\U000F005D"
+                  text_font: arrow_font
+                  text_color: 0x4FC3F7
+                  width: 36
+                  height: 36
+                  text_align: center
+              - label:
+                  id: wind_arrow_4
+                  text: "\U000F005D"
+                  text_font: arrow_font
+                  text_color: 0x4FC3F7
+                  width: 36
+                  height: 36
+                  text_align: center
+              - label:
+                  id: wind_arrow_5
+                  text: "\U000F005D"
+                  text_font: arrow_font
+                  text_color: 0x4FC3F7
+                  width: 36
+                  height: 36
+                  text_align: center
+              - label:
+                  id: wind_arrow_6
+                  text: "\U000F005D"
+                  text_font: arrow_font
+                  text_color: 0x4FC3F7
+                  width: 36
+                  height: 36
+                  text_align: center
+              - label:
+                  id: wind_arrow_7
+                  text: "\U000F005D"
+                  text_font: arrow_font
+                  text_color: 0x4FC3F7
+                  width: 36
+                  height: 36
+                  text_align: center
+
+        # Time labels — aligned with chart columns
+        - obj:
+            width: 100%
+            height: 24
+            bg_opa: 0
+            border_width: 0
+            pad_all: 0
+            layout:
+              type: flex
+              flex_flow: row
+              flex_align_main: space_between
+              flex_align_cross: center
+            widgets:
+              - label:
+                  id: chart_time_0
+                  text: "--:--"
+                  text_font: clockbar_font
+                  text_color: 0x888888
+                  width: 60
+                  text_align: center
+              - label:
+                  id: chart_time_1
+                  text: "--:--"
+                  text_font: clockbar_font
+                  text_color: 0x888888
+                  width: 60
+                  text_align: center
+              - label:
+                  id: chart_time_2
+                  text: "--:--"
+                  text_font: clockbar_font
+                  text_color: 0x888888
+                  width: 60
+                  text_align: center
+              - label:
+                  id: chart_time_3
+                  text: "--:--"
+                  text_font: clockbar_font
+                  text_color: 0x888888
+                  width: 60
+                  text_align: center
+              - label:
+                  id: chart_time_4
+                  text: "--:--"
+                  text_font: clockbar_font
+                  text_color: 0x888888
+                  width: 60
+                  text_align: center
+              - label:
+                  id: chart_time_5
+                  text: "--:--"
+                  text_font: clockbar_font
+                  text_color: 0x888888
+                  width: 60
+                  text_align: center
+              - label:
+                  id: chart_time_6
+                  text: "--:--"
+                  text_font: clockbar_font
+                  text_color: 0x888888
+                  width: 60
+                  text_align: center
+              - label:
+                  id: chart_time_7
+                  text: "--:--"
+                  text_font: clockbar_font
+                  text_color: 0x888888
+                  width: 60
+                  text_align: center

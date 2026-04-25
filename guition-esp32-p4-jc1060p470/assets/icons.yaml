@@ -43,6 +43,13 @@ font:
       "\U000F0425",  # mdi-radio
       ]
 
+  # Wind direction arrow — single up-arrow glyph, rotated per bearing via transform_angle
+  - file: 'https://github.com/Templarian/MaterialDesign-Webfont/raw/v7.4.47/fonts/materialdesignicons-webfont.ttf'
+    id: arrow_font
+    size: 28
+    bpp: 8
+    glyphs: ["\U000F005D"]  # mdi-arrow-up
+
 # Map icons to names
 substitutions:
   lightbulb:        "\U000F0335"

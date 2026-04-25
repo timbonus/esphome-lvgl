@@ -1,0 +1,295 @@
+# Combined weather template sensors for the touch screen dashboard.
+#
+# HOW TO INSTALL:
+#   Copy this file to your Home Assistant config directory, then add to
+#   configuration.yaml:
+#
+#       template: !include weather_sensors.yaml
+#
+#   If you already have a template: section, merge the two blocks below
+#   into it instead.
+
+# ── Daily forecast (refreshes every hour) ──────────────────────────────────
+# Provides 3-day high/low/rain for the weather cards.
+
+- trigger:
+    - trigger: time_pattern
+      hours: "/1"
+    - trigger: homeassistant
+      event: start
+  action:
+    - action: weather.get_forecasts
+      target:
+        entity_id: weather.clovelly
+      data:
+        type: daily
+      response_variable: df
+  sensor:
+
+    - name: "Clovelly Daily 0 High"
+      unique_id: clovelly_daily_0_high
+      unit_of_measurement: "°C"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[0] %}
+        {{ f.get('temperature', f.get('templow', none)) | round(0) | int }}
+    - name: "Clovelly Daily 0 Low"
+      unique_id: clovelly_daily_0_low
+      unit_of_measurement: "°C"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[0] %}
+        {{ f.get('templow', f.get('temperature', none)) | round(0) | int }}
+    - name: "Clovelly Daily 0 Rain"
+      unique_id: clovelly_daily_0_rain
+      unit_of_measurement: "%"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[0] %}
+        {{ (f.get('precipitation_probability') or f.get('precipitation', 0)) | round(0) | int }}
+
+    - name: "Clovelly Daily 1 High"
+      unique_id: clovelly_daily_1_high
+      unit_of_measurement: "°C"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[1] %}
+        {{ f.get('temperature', f.get('templow', none)) | round(0) | int }}
+    - name: "Clovelly Daily 1 Low"
+      unique_id: clovelly_daily_1_low
+      unit_of_measurement: "°C"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[1] %}
+        {{ f.get('templow', f.get('temperature', none)) | round(0) | int }}
+    - name: "Clovelly Daily 1 Rain"
+      unique_id: clovelly_daily_1_rain
+      unit_of_measurement: "%"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[1] %}
+        {{ (f.get('precipitation_probability') or f.get('precipitation', 0)) | round(0) | int }}
+
+    - name: "Clovelly Daily 2 High"
+      unique_id: clovelly_daily_2_high
+      unit_of_measurement: "°C"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[2] %}
+        {{ f.get('temperature', f.get('templow', none)) | round(0) | int }}
+    - name: "Clovelly Daily 2 Low"
+      unique_id: clovelly_daily_2_low
+      unit_of_measurement: "°C"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[2] %}
+        {{ f.get('templow', f.get('temperature', none)) | round(0) | int }}
+    - name: "Clovelly Daily 2 Rain"
+      unique_id: clovelly_daily_2_rain
+      unit_of_measurement: "%"
+      state: >
+        {% set f = df['weather.clovelly'].forecast[2] %}
+        {{ (f.get('precipitation_probability') or f.get('precipitation', 0)) | round(0) | int }}
+
+# ── Hourly forecast (refreshes every 30 min) ───────────────────────────────
+# Provides 8 slots at 2-hour intervals for the hourly strip.
+
+- trigger:
+    - trigger: time_pattern
+      minutes: "/30"
+    - trigger: homeassistant
+      event: start
+  action:
+    - action: weather.get_forecasts
+      target:
+        entity_id: weather.clovelly_hourly
+      data:
+        type: hourly
+      response_variable: hf
+  sensor:
+
+    - name: "Clovelly Hour 0 Time"
+      unique_id: clovelly_hour_0_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[0].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 0 Temp"
+      unique_id: clovelly_hour_0_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[0].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 0 Wind"
+      unique_id: clovelly_hour_0_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[0] %}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
+
+    - name: "Clovelly Hour 1 Time"
+      unique_id: clovelly_hour_1_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[2].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 1 Temp"
+      unique_id: clovelly_hour_1_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[2].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 1 Wind"
+      unique_id: clovelly_hour_1_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[2] %}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
+
+    - name: "Clovelly Hour 2 Time"
+      unique_id: clovelly_hour_2_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[4].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 2 Temp"
+      unique_id: clovelly_hour_2_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[4].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 2 Wind"
+      unique_id: clovelly_hour_2_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[4] %}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
+
+    - name: "Clovelly Hour 3 Time"
+      unique_id: clovelly_hour_3_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[6].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 3 Temp"
+      unique_id: clovelly_hour_3_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[6].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 3 Wind"
+      unique_id: clovelly_hour_3_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[6] %}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
+
+    - name: "Clovelly Hour 4 Time"
+      unique_id: clovelly_hour_4_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[8].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 4 Temp"
+      unique_id: clovelly_hour_4_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[8].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 4 Wind"
+      unique_id: clovelly_hour_4_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[8] %}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
+
+    - name: "Clovelly Hour 5 Time"
+      unique_id: clovelly_hour_5_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[10].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 5 Temp"
+      unique_id: clovelly_hour_5_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[10].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 5 Wind"
+      unique_id: clovelly_hour_5_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[10] %}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
+
+    - name: "Clovelly Hour 6 Time"
+      unique_id: clovelly_hour_6_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[12].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 6 Temp"
+      unique_id: clovelly_hour_6_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[12].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 6 Wind"
+      unique_id: clovelly_hour_6_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[12] %}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
+
+    - name: "Clovelly Hour 7 Time"
+      unique_id: clovelly_hour_7_time
+      state: >
+        {{ (hf['weather.clovelly_hourly'].forecast[14].datetime | as_datetime | as_local).strftime('%H:%M') }}
+    - name: "Clovelly Hour 7 Temp"
+      unique_id: clovelly_hour_7_temp
+      unit_of_measurement: "°C"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[14].temperature | round(0) | int }}"
+    - name: "Clovelly Hour 7 Wind"
+      unique_id: clovelly_hour_7_wind
+      state: >
+        {% set f = hf['weather.clovelly_hourly'].forecast[14] %}
+        {% set spd = f.get('wind_speed') %}
+        {% set brg = f.get('wind_bearing') %}
+        {% if spd is not none %}{{ (brg ~ ' ') if brg is not none else '' }}{{ spd | round(0) | int }}{% else %}--{% endif %}
+
+    # ── Numeric wind speed (km/h) and bearing string for chart arrows ───────
+
+    - name: "Clovelly Hour 0 Wind Speed"
+      unique_id: clovelly_hour_0_wind_speed
+      unit_of_measurement: "km/h"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[0].get('wind_speed', 0) | round(0) | int }}"
+    - name: "Clovelly Hour 0 Wind Bearing"
+      unique_id: clovelly_hour_0_wind_bearing
+      state: "{{ hf['weather.clovelly_hourly'].forecast[0].get('wind_bearing') or 'N' }}"
+
+    - name: "Clovelly Hour 1 Wind Speed"
+      unique_id: clovelly_hour_1_wind_speed
+      unit_of_measurement: "km/h"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[2].get('wind_speed', 0) | round(0) | int }}"
+    - name: "Clovelly Hour 1 Wind Bearing"
+      unique_id: clovelly_hour_1_wind_bearing
+      state: "{{ hf['weather.clovelly_hourly'].forecast[2].get('wind_bearing') or 'N' }}"
+
+    - name: "Clovelly Hour 2 Wind Speed"
+      unique_id: clovelly_hour_2_wind_speed
+      unit_of_measurement: "km/h"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[4].get('wind_speed', 0) | round(0) | int }}"
+    - name: "Clovelly Hour 2 Wind Bearing"
+      unique_id: clovelly_hour_2_wind_bearing
+      state: "{{ hf['weather.clovelly_hourly'].forecast[4].get('wind_bearing') or 'N' }}"
+
+    - name: "Clovelly Hour 3 Wind Speed"
+      unique_id: clovelly_hour_3_wind_speed
+      unit_of_measurement: "km/h"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[6].get('wind_speed', 0) | round(0) | int }}"
+    - name: "Clovelly Hour 3 Wind Bearing"
+      unique_id: clovelly_hour_3_wind_bearing
+      state: "{{ hf['weather.clovelly_hourly'].forecast[6].get('wind_bearing') or 'N' }}"
+
+    - name: "Clovelly Hour 4 Wind Speed"
+      unique_id: clovelly_hour_4_wind_speed
+      unit_of_measurement: "km/h"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[8].get('wind_speed', 0) | round(0) | int }}"
+    - name: "Clovelly Hour 4 Wind Bearing"
+      unique_id: clovelly_hour_4_wind_bearing
+      state: "{{ hf['weather.clovelly_hourly'].forecast[8].get('wind_bearing') or 'N' }}"
+
+    - name: "Clovelly Hour 5 Wind Speed"
+      unique_id: clovelly_hour_5_wind_speed
+      unit_of_measurement: "km/h"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[10].get('wind_speed', 0) | round(0) | int }}"
+    - name: "Clovelly Hour 5 Wind Bearing"
+      unique_id: clovelly_hour_5_wind_bearing
+      state: "{{ hf['weather.clovelly_hourly'].forecast[10].get('wind_bearing') or 'N' }}"
+
+    - name: "Clovelly Hour 6 Wind Speed"
+      unique_id: clovelly_hour_6_wind_speed
+      unit_of_measurement: "km/h"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[12].get('wind_speed', 0) | round(0) | int }}"
+    - name: "Clovelly Hour 6 Wind Bearing"
+      unique_id: clovelly_hour_6_wind_bearing
+      state: "{{ hf['weather.clovelly_hourly'].forecast[12].get('wind_bearing') or 'N' }}"
+
+    - name: "Clovelly Hour 7 Wind Speed"
+      unique_id: clovelly_hour_7_wind_speed
+      unit_of_measurement: "km/h"
+      state: "{{ hf['weather.clovelly_hourly'].forecast[14].get('wind_speed', 0) | round(0) | int }}"
+    - name: "Clovelly Hour 7 Wind Bearing"
+      unique_id: clovelly_hour_7_wind_bearing
+      state: "{{ hf['weather.clovelly_hourly'].forecast[14].get('wind_bearing') or 'N' }}"
